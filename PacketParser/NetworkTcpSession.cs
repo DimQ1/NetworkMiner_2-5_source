@@ -513,7 +513,7 @@ namespace PacketParser
                 //this.destinationPort=destinationPort;
                 this.dataList = new SortedList<uint, byte[]>();
                 //this.dataListMaxSize=64;//i hope I shouldn't need more than 64 packets in the list. It depends on how late a misordered packet might get received. Smaller number gives better performance, larger number gives better tolerance to reordered packets
-                this.dataListMaxSize = 256;//allows data packets to be out-of-order up to 256 packets apart from each other in the same unidirectional stream
+                this.dataListMaxSize = 25600;//allows data packets to be out-of-order up to 256 packets apart from each other in the same unidirectional stream
 
                 //this.totalByteCount=0;
                 this.virtualTcpData = null;
