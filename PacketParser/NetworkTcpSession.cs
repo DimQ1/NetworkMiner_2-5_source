@@ -21,7 +21,7 @@ namespace PacketParser
         //private DateTime synPacketTimestamp;//in NetworkFlow
         //private DateTime latestPacketTimestamp;//in NetworkFlow
 
-        private uint windowssize = 0;
+        private uint windowSize = 0;
 
         private long startFrameNumber;
 
@@ -287,7 +287,7 @@ namespace PacketParser
             {//ACK (client->server)
                 if (tcpPacket.FlagBits.Acknowledgement && sourceHost == this.ClientHost)
                 {
-                    this.windowssize = tcpPacket.WindowSize;
+                    this.windowSize = tcpPacket.WindowSize;
                     this.SetEstablished(tcpPacket.SequenceNumber, tcpPacket.AcknowledgmentNumber);
                 }
                 else
@@ -305,7 +305,7 @@ namespace PacketParser
 
                     if (tcpPacket.FlagBits.Acknowledgement && tcpPacket.FlagBits.Fin && tcpPacket.FlagBits.Push)
                     {
-                        this.windowssize = tcpPacket.WindowSize;
+                        this.windowSize = tcpPacket.WindowSize;
                         if (sourceHost.IPAddress.Equals(this.ServerHost.IPAddress) && tcpPacket.SourcePort == this.ServerTcpPort)
                             this.serverToClientTcpDataStream.ExpectedTcpSequenceNumber = tcpPacket.SequenceNumber;
                         else
@@ -370,7 +370,7 @@ namespace PacketParser
             {//close nicely
                 if (!this.finPacketReceived)
                 {
-                    this.windowssize = tcpPacket.WindowSize;
+                    this.windowSize = tcpPacket.WindowSize;
                     this.finPacketReceived = true;
                     if (sourceHost == this.ServerHost && tcpPacket.SourcePort == this.ServerTcpPort)
                         this.serverToClientFinPacketSequenceNumber = tcpPacket.SequenceNumber;
