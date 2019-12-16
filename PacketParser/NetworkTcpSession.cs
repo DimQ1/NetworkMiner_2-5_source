@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace PacketParser
 {
-    public class NetworkTcpSession : IComparable
+    public class NetworkTcpSession : IComparable<NetworkTcpSession>
     {//only TCP sessions
 
 
