@@ -41,7 +41,7 @@ namespace PacketParser.Fingerprints {
         public static MacAges GetMacAges(string applicationExecutablePath) {
             lock (macCollectionLock) {
                 if (singletonInstance == null) {
-                    singletonInstance = new MacAges(Path.GetDirectoryName(applicationExecutablePath) + System.IO.Path.DirectorySeparatorChar + "Fingerprints" + System.IO.Path.DirectorySeparatorChar + "mac-ages.csv");
+                    singletonInstance = new MacAges(Path.GetDirectoryName(applicationExecutablePath) + Path.DirectorySeparatorChar + "Fingerprints" + Path.DirectorySeparatorChar + "mac-ages.csv");
                 }
             }
             return singletonInstance;

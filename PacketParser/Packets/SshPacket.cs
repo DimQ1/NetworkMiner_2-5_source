@@ -84,7 +84,7 @@ namespace PacketParser.Packets {
             get { return true; }
         }
 
-        public int ParsedBytesCount { get { return base.PacketLength; } }
+        public int ParsedBytesCount { get { return PacketLength; } }
 
         #endregion
     }

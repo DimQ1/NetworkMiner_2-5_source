@@ -139,10 +139,10 @@ namespace PacketParser {
             this.sampleCount = 0;
             //The GetTempFileName method will raise an IOException if it is used to create more than 65535 files without deleting previous temporary files.
             //The GetTempFileName method will raise an IOException if no unique temporary file name is available.To resolve this error, delete all unneeded temporary files.
-            this.tempFileName = System.IO.Path.GetTempFileName();
+            this.tempFileName = Path.GetTempFileName();
             FileTransfer.FileStreamAssemblerList.TempFileHandlers.Add(this);
 
-            this.tempFileStream = new System.IO.FileStream(tempFileName, System.IO.FileMode.Create, System.IO.FileAccess.ReadWrite, System.IO.FileShare.Read, 262144);
+            this.tempFileStream = new System.IO.FileStream(tempFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, 262144);
             this.sampleInfo = new List<SampleChunkInfo>();
         }
 
@@ -398,9 +398,9 @@ namespace PacketParser {
 
             internal Pcm16BitSampleStream(AudioStream audioStream, long firstSampleTick, bool insertSilenceOnMissingSamples) {
                 if (audioStream.Format == PacketHandlers.RtpPacketHandler.RtpPayloadType.G711_PCM_A)
-                    this.decompressionTable = AudioStream.ALawToLinear16BitPcmTable;
+                    this.decompressionTable = ALawToLinear16BitPcmTable;
                 else if (audioStream.Format == PacketHandlers.RtpPacketHandler.RtpPayloadType.G711_PCM_U)
-                    this.decompressionTable = AudioStream.MuLawToLinear16BitPcmTable;
+                    this.decompressionTable = MuLawToLinear16BitPcmTable;
                 else
                     throw new NotSupportedException("Only u-Law and A-Law formats are supported");
 

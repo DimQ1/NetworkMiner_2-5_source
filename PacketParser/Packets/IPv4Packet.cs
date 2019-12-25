@@ -110,7 +110,7 @@ namespace PacketParser.Packets {
                 if (this.totalLength == 0)//TCP Segment Offload suspected
                     this.totalLength = (ushort)(packetEndIndex - packetStartIndex + 1);
                 else if (this.totalLength <packetEndIndex-packetStartIndex+1)//the ethernet packet has to be at least 60 bytes. so there might be some padding (ethernet trailer) here http://mirror.ethereal.com/lists/ethereal-users/200012/msg00114.html
-                    base.PacketEndIndex=packetStartIndex+ this.totalLength -1;//adjust the IPv4 packet length since it shall be shorter
+                    PacketEndIndex = packetStartIndex+ this.totalLength -1;//adjust the IPv4 packet length since it shall be shorter
             }
             //IPID (offset=4)
             this.identification = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 4, false);
@@ -212,31 +212,31 @@ namespace PacketParser.Packets {
             else if(PacketStartIndex+headerLength<PacketEndIndex && this.fragmentOffset == 0) {
                 AbstractPacket packet;
                 try {
-                    if (this.protocol == (byte)IPv4Packet.RFC1700Protocols.TCP) {
+                    if (this.protocol == (byte)RFC1700Protocols.TCP) {
                         //TCP packet
                         if (PacketStartIndex + headerLength + 20 > PacketEndIndex + 1)
                             yield break;//too little room for a TCP packet
                         else
                             packet = new TcpPacket(this.ParentFrame, PacketStartIndex + headerLength, PacketEndIndex);
                     }
-                    else if (this.protocol == (byte)IPv4Packet.RFC1700Protocols.UDP) {
+                    else if (this.protocol == (byte)RFC1700Protocols.UDP) {
                         //UDP packet
                         if (PacketStartIndex + headerLength + 8 > PacketEndIndex + 1)
                             yield break;//too little room for a UDP packet
                         else
                             packet = new UdpPacket(this.ParentFrame, PacketStartIndex + headerLength, PacketEndIndex);
                     }
-                    else if (this.protocol == (byte)IPv4Packet.RFC1700Protocols.SCTP) {
+                    else if (this.protocol == (byte)RFC1700Protocols.SCTP) {
                         //SCTP packet
                         packet = new SctpPacket(this.ParentFrame, PacketStartIndex + headerLength, PacketEndIndex);
                     }
-                    else if (this.protocol == (byte)IPv4Packet.RFC1700Protocols.IPv6) {
+                    else if (this.protocol == (byte)RFC1700Protocols.IPv6) {
                         packet = new IPv6Packet(this.ParentFrame, PacketStartIndex + headerLength, PacketEndIndex);
                     }
-                    else if (this.protocol == (byte)IPv4Packet.RFC1700Protocols.GRE) {
+                    else if (this.protocol == (byte)RFC1700Protocols.GRE) {
                         packet = new GrePacket(this.ParentFrame, PacketStartIndex + headerLength, PacketEndIndex);
                     }
-                    else if (this.protocol == (byte)IPv4Packet.RFC1700Protocols.ICMP) {
+                    else if (this.protocol == (byte)RFC1700Protocols.ICMP) {
                         packet = new IcmpPacket(this.ParentFrame, PacketStartIndex + headerLength, PacketEndIndex);
                     }
                     else {

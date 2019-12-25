@@ -70,18 +70,18 @@ namespace PacketParser.PacketHandlers {
                     if(dhcpPacket.DhcpMessageType==3) {//Must be a DHCP Request
                         System.Net.IPAddress requestedIpAddress=new System.Net.IPAddress(option.OptionValue);
                         if(sourceHost.IPAddress!=requestedIpAddress) {
-                            if(!base.MainPacketHandler.NetworkHostList.ContainsIP(requestedIpAddress)) {
+                            if(!MainPacketHandler.NetworkHostList.ContainsIP(requestedIpAddress)) {
                                 NetworkHost clonedHost=new NetworkHost(requestedIpAddress);
                                 clonedHost.MacAddress=sourceHost.MacAddress;
                                 //foreach(string hostname in sourceHost.HostNameList)
                                 //    clonedHost.AddHostName(hostname);
-                                lock(base.MainPacketHandler.NetworkHostList)
-                                    base.MainPacketHandler.NetworkHostList.Add(clonedHost);
+                                lock(MainPacketHandler.NetworkHostList)
+                                    MainPacketHandler.NetworkHostList.Add(clonedHost);
                                 //now change the host to the cloned one (and hope it works out...)
                                 sourceHost=clonedHost;
                             }
                             else {
-                                sourceHost=base.MainPacketHandler.NetworkHostList.GetNetworkHost(requestedIpAddress);
+                                sourceHost= MainPacketHandler.NetworkHostList.GetNetworkHost(requestedIpAddress);
                                 if(dhcpPacket.OpCode==Packets.DhcpPacket.OpCodeValue.BootRequest && (sourceHost.MacAddress==null || dhcpPacket.ClientMacAddress!=sourceHost.MacAddress)) {
                                     sourceHost.MacAddress=dhcpPacket.ClientMacAddress;
                                 }

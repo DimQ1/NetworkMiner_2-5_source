@@ -71,21 +71,21 @@ namespace PacketParser.PacketHandlers {
                     if (dnsPacket.AnswerRecords != null && dnsPacket.AnswerRecords.Length > 0) {
                         foreach (Packets.DnsPacket.ResourceRecord r in dnsPacket.AnswerRecords) {
                             if (r.IP != null) {
-                                if (!base.MainPacketHandler.NetworkHostList.ContainsIP(r.IP)) {
+                                if (!MainPacketHandler.NetworkHostList.ContainsIP(r.IP)) {
                                     NetworkHost host = new NetworkHost(r.IP);
                                     host.AddHostName(r.DNS);
-                                    lock(base.MainPacketHandler.NetworkHostList)
-                                        base.MainPacketHandler.NetworkHostList.Add(host);
+                                    lock(MainPacketHandler.NetworkHostList)
+                                        MainPacketHandler.NetworkHostList.Add(host);
                                     MainPacketHandler.OnNetworkHostDetected(new Events.NetworkHostEventArgs(host));
                                     //base.MainPacketHandler.ParentForm.ShowDetectedHost(host);
                                 }
                                 else
-                                    base.MainPacketHandler.NetworkHostList.GetNetworkHost(r.IP).AddHostName(r.DNS);
+                                    MainPacketHandler.NetworkHostList.GetNetworkHost(r.IP).AddHostName(r.DNS);
                                 if (cNamePointers[r.DNS] != null)
-                                    base.MainPacketHandler.NetworkHostList.GetNetworkHost(r.IP).AddHostName(cNamePointers[r.DNS]);
+                                    MainPacketHandler.NetworkHostList.GetNetworkHost(r.IP).AddHostName(cNamePointers[r.DNS]);
 
                             }
-                            else if (r.Type == (ushort)Packets.DnsPacket.RRTypes.CNAME) {
+                            else if (r.Type == (ushort)DnsPacket.RRTypes.CNAME) {
                                 cNamePointers.Add(r.PrimaryName, r.DNS);
                             }
 

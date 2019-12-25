@@ -33,7 +33,7 @@ namespace PacketParser.PacketHandlers {
             : base(mainPacketHandler) {
 
             this.tlsRecordFragmentCache = new PopularityList<FiveTuple, Tuple<List<Packets.TlsRecordPacket>, List<Packets.TlsRecordPacket>>>(100);
-            this.ja3Fingerprints = Fingerprints.Ja3FingerprintDictionaryFactory.CreateDictionary(base.MainPacketHandler.FingerprintsPath + "ja3fingerprint.json");
+            this.ja3Fingerprints = Fingerprints.Ja3FingerprintDictionaryFactory.CreateDictionary(MainPacketHandler.FingerprintsPath + "ja3fingerprint.json");
         }
 
         #region ITcpSessionPacketHandler Members
@@ -125,7 +125,7 @@ namespace PacketParser.PacketHandlers {
                     accumulatedRecordLength += recordList[i].Length;
                     if (accumulatedRecordLength >= parsedBytes) {
                         if (accumulatedRecordLength > parsedBytes) {
-                            base.MainPacketHandler.OnAnomalyDetected(new PacketParser.Events.AnomalyEventArgs("TLS data boundary is not on a TLS record boundary in frame " + tcpPacket.ParentFrame.FrameNumber, tcpPacket.ParentFrame.Timestamp));
+                            MainPacketHandler.OnAnomalyDetected(new PacketParser.Events.AnomalyEventArgs("TLS data boundary is not on a TLS record boundary in frame " + tcpPacket.ParentFrame.FrameNumber, tcpPacket.ParentFrame.Timestamp));
 #if DEBUG
                             System.Diagnostics.Debugger.Break();
 #endif
@@ -165,7 +165,7 @@ namespace PacketParser.PacketHandlers {
                 System.Collections.Specialized.NameValueCollection param = new System.Collections.Specialized.NameValueCollection {
                             { "TLS Handshake " + Enum.GetName(typeof(Packets.TlsRecordPacket.HandshakePacket.MessageTypes), handshake.MessageType) + " Supported Version", version.Item1.ToString() + "." + version.Item2.ToString() + " (0x" + version.Item1.ToString("x2") + version.Item2.ToString("x2") + ")" }
                         };
-                base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(handshake.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, param, handshake.ParentFrame.Timestamp, "TLS Handshake"));
+                MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(handshake.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, param, handshake.ParentFrame.Timestamp, "TLS Handshake"));
 
             }
             if (!String.IsNullOrEmpty(handshake.GetAlpnNextProtocolString())) {
@@ -173,7 +173,7 @@ namespace PacketParser.PacketHandlers {
                 System.Collections.Specialized.NameValueCollection param = new System.Collections.Specialized.NameValueCollection {
                             { "TLS ALPN", handshake.GetAlpnNextProtocolString() }
                         };
-                base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(handshake.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, param, handshake.ParentFrame.Timestamp, "TLS Handshake"));
+                MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(handshake.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, param, handshake.ParentFrame.Timestamp, "TLS Handshake"));
 
             }
             if (handshake.MessageType == Packets.TlsRecordPacket.HandshakePacket.MessageTypes.ClientHello) {
@@ -189,7 +189,7 @@ namespace PacketParser.PacketHandlers {
                     destinationHost.AddHostName(handshake.ServerHostName);
                     param.Add("TLS Server Name (SNI)", handshake.ServerHostName);
                 }
-                base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(handshake.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, param, handshake.ParentFrame.Timestamp, "TLS Client Hello"));
+                MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(handshake.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, param, handshake.ParentFrame.Timestamp, "TLS Client Hello"));
             }
             else if (handshake.MessageType == Packets.TlsRecordPacket.HandshakePacket.MessageTypes.Certificate)
                 for (int i = 0; i < handshake.CertificateList.Count; i++) {
@@ -227,8 +227,8 @@ namespace PacketParser.PacketHandlers {
                         details = "TLS Certificate: Unknown x509 Certificate";
 
 
-                    FileTransfer.FileStreamAssembler assembler = new FileTransfer.FileStreamAssembler(base.MainPacketHandler.FileStreamAssemblerList, fiveTuple, transferIsClientToServer, FileTransfer.FileStreamTypes.TlsCertificate, filename, fileLocation, certificate.Length, certificate.Length, details, null, tcpPacket.ParentFrame.FrameNumber, tcpPacket.ParentFrame.Timestamp, FileTransfer.FileStreamAssembler.FileAssmeblyRootLocation.source);
-                    base.MainPacketHandler.FileStreamAssemblerList.Add(assembler);
+                    FileTransfer.FileStreamAssembler assembler = new FileTransfer.FileStreamAssembler(MainPacketHandler.FileStreamAssemblerList, fiveTuple, transferIsClientToServer, FileTransfer.FileStreamTypes.TlsCertificate, filename, fileLocation, certificate.Length, certificate.Length, details, null, tcpPacket.ParentFrame.FrameNumber, tcpPacket.ParentFrame.Timestamp, FileTransfer.FileStreamAssembler.FileAssmeblyRootLocation.source);
+                    MainPacketHandler.FileStreamAssemblerList.Add(assembler);
                     if (i == 0 && x509CertSubject.Contains(".") && !x509CertSubject.Contains("*") && !x509CertSubject.Contains(" "))
                         sourceHost.AddHostName(x509CertSubject);
                     System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
@@ -287,7 +287,7 @@ namespace PacketParser.PacketHandlers {
                     catch (Exception) { }
 
 
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(tcpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, parameters, tcpPacket.ParentFrame.Timestamp, "X.509 Certificate"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(tcpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, parameters, tcpPacket.ParentFrame.Timestamp, "X.509 Certificate"));
 
                     if (assembler.TryActivate())
                         assembler.AddData(certificate, tcpPacket.SequenceNumber);//this one should trigger FinnishAssembling()

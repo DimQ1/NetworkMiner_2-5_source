@@ -105,7 +105,7 @@ namespace PacketParser.Packets {
 
             internal ResourceRecord(NetBiosNameServicePacket nbnsPacket, ref int offset) {
              
-                this.Name = NetBiosPacket.DecodeNetBiosName(nbnsPacket.ParentFrame, ref offset, nbnsPacket);
+                this.Name = DecodeNetBiosName(nbnsPacket.ParentFrame, ref offset, nbnsPacket);
                 this.Type = Utils.ByteConverter.ToUInt16(nbnsPacket.ParentFrame.Data, offset);
                 offset += 2;
                 this.Class = Utils.ByteConverter.ToUInt16(nbnsPacket.ParentFrame.Data, offset);
@@ -140,7 +140,7 @@ namespace PacketParser.Packets {
             for(int q=0; q<questionCount; q++) {//I'll just assume that there is only one question... otherwise it will be overwritten
 
                 //get a NetBIOS name label
-                this.questionNameDecoded=NetBiosPacket.DecodeNetBiosName(parentFrame, ref i, this);
+                this.questionNameDecoded= DecodeNetBiosName(parentFrame, ref i, this);
 
                 //Get Question Type
                 this.questionType = Utils.ByteConverter.ToUInt16(parentFrame.Data, i);
@@ -212,7 +212,7 @@ namespace PacketParser.Packets {
              *    |                                                               |
              *    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
              **/
-            string name = NetBiosPacket.DecodeNetBiosName(parentFrame, ref offset, this);
+            string name = DecodeNetBiosName(parentFrame, ref offset, this);
             ushort nbnsType = Utils.ByteConverter.ToUInt16(parentFrame.Data, offset);
             offset += 2;
             ushort nbnsClass = Utils.ByteConverter.ToUInt16(parentFrame.Data, offset);

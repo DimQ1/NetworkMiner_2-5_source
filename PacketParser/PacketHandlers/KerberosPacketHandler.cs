@@ -262,9 +262,9 @@ namespace PacketParser.PacketHandlers {
                         }
                         
                         if(kerberosPacket.IsRequest)
-                            base.MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "Kerberos", hashUser, h.hash, kerberosPacket.ParentFrame.Timestamp));
+                            MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "Kerberos", hashUser, h.hash, kerberosPacket.ParentFrame.Timestamp));
                         else
-                            base.MainPacketHandler.AddCredential(new NetworkCredential(destinationHost, sourceHost, "Kerberos", hashUser, h.hash, kerberosPacket.ParentFrame.Timestamp));
+                            MainPacketHandler.AddCredential(new NetworkCredential(destinationHost, sourceHost, "Kerberos", hashUser, h.hash, kerberosPacket.ParentFrame.Timestamp));
                         
                     }
                     /*
@@ -272,7 +272,7 @@ namespace PacketParser.PacketHandlers {
                     if (krbHash != null)
                         base.MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "Kerberos", sessionTicketPrimitives.Username, krbHash, kerberosPacket.ParentFrame.Timestamp, sessionTicketPrimitives.Realm));
                     */
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(kerberosPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, kerberosPacket.ParentFrame.Timestamp, "Kerberos " + Enum.GetName(typeof(KerberosPacket.MessageType), kerberosPacket.MsgType)));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(kerberosPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, kerberosPacket.ParentFrame.Timestamp, "Kerberos " + Enum.GetName(typeof(KerberosPacket.MessageType), kerberosPacket.MsgType)));
                     parsedBytes += kerberosPacket.PacketLength;
                 }
 
@@ -356,12 +356,12 @@ namespace PacketParser.PacketHandlers {
                 }
                 else if (item.Item2 == Utils.ByteConverter.Asn1TypeTag.GeneralString && (usernameRequestPaths.Contains(item.Item1) || usernameResponsePaths.Contains(item.Item1)) && !itemString.EndsWith("$")) {
                     if (usernameRequestPaths.Contains(item.Item1)) {
-                        base.MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "Kerberos", itemString, kerberosPacket.ParentFrame.Timestamp));
+                        MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "Kerberos", itemString, kerberosPacket.ParentFrame.Timestamp));
                         sourceHost.AddNumberedExtraDetail("Kerberos Username", itemString);
                         username = itemString;
                     }
                     else if (usernameResponsePaths.Contains(item.Item1)) {
-                        base.MainPacketHandler.AddCredential(new NetworkCredential(destinationHost, sourceHost, "Kerberos", itemString, kerberosPacket.ParentFrame.Timestamp));
+                        MainPacketHandler.AddCredential(new NetworkCredential(destinationHost, sourceHost, "Kerberos", itemString, kerberosPacket.ParentFrame.Timestamp));
                         destinationHost.AddNumberedExtraDetail("Kerberos Username", itemString);
                         username = itemString;
                     }

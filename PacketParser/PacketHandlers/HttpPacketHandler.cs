@@ -312,12 +312,12 @@ namespace PacketParser.PacketHandlers {
                 if(httpPacket.PacketHeaderIsComplete) {
                     //check if it is a POST and content length is small
                     if(httpPacket.RequestMethod!=Packets.HttpPacket.RequestMethods.POST || httpPacket.ContentLength>4096/* used to be 1024*/ || httpPacket.ContentIsComplete()) {
-                        successfulExtraction = ExtractHttpData(httpPacket, tcpPacket, tcpSession.Flow.FiveTuple, transferIsClientToServer, base.MainPacketHandler);
+                        successfulExtraction = ExtractHttpData(httpPacket, tcpPacket, tcpSession.Flow.FiveTuple, transferIsClientToServer, MainPacketHandler);
                         //successfulExtraction=true;
                     }
 
-                    if (base.MainPacketHandler.ExtraHttpPacketHandler != null)
-                        base.MainPacketHandler.ExtraHttpPacketHandler.ExtractHttpData(httpPacket, tcpPacket, tcpSession.Flow.FiveTuple, transferIsClientToServer, base.MainPacketHandler);
+                    if (MainPacketHandler.ExtraHttpPacketHandler != null)
+                        MainPacketHandler.ExtraHttpPacketHandler.ExtractHttpData(httpPacket, tcpPacket, tcpSession.Flow.FiveTuple, transferIsClientToServer, MainPacketHandler);
                 }
 
             }
@@ -405,9 +405,9 @@ namespace PacketParser.PacketHandlers {
                     System.Collections.Specialized.NameValueCollection httpRequestNvc = new System.Collections.Specialized.NameValueCollection();
                     httpRequestNvc.Add(httpPacket.RequestMethod.ToString(), httpPacket.RequestedFileName);
                     if (httpPacket.RequestedHost?.Length > 0)
-                        base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, fiveTuple.Transport, tcpPacket.SourcePort, tcpPacket.DestinationPort, httpRequestNvc, httpPacket.ParentFrame.Timestamp, "HTTP Request to " + httpPacket.RequestedHost));
+                        MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, fiveTuple.Transport, tcpPacket.SourcePort, tcpPacket.DestinationPort, httpRequestNvc, httpPacket.ParentFrame.Timestamp, "HTTP Request to " + httpPacket.RequestedHost));
                     else
-                        base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, fiveTuple.Transport, tcpPacket.SourcePort, tcpPacket.DestinationPort, httpRequestNvc, httpPacket.ParentFrame.Timestamp, "HTTP Request"));
+                        MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, fiveTuple.Transport, tcpPacket.SourcePort, tcpPacket.DestinationPort, httpRequestNvc, httpPacket.ParentFrame.Timestamp, "HTTP Request"));
                     //base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, httpRequestNvc, httpPacket.ParentFrame.Timestamp, "HTTP Request"));
 
                 }
@@ -430,11 +430,11 @@ namespace PacketParser.PacketHandlers {
                     ignoredHeaderNames.Add("accept-language", null);
                     ignoredHeaderNames.Add("accept-encoding", null);
 
-                    System.Collections.Specialized.NameValueCollection httpHeaders = HttpPacketHandler.ParseHeaders(httpPacket, ignoredHeaderNames);
+                    System.Collections.Specialized.NameValueCollection httpHeaders = ParseHeaders(httpPacket, ignoredHeaderNames);
 
 
                     //mainPacketHandler.OnParametersDetected
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, httpHeaders, httpPacket.ParentFrame.Timestamp, "HTTP Header"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, httpHeaders, httpPacket.ParentFrame.Timestamp, "HTTP Header"));
 
                     foreach (string headerName in httpHeaders.Keys) {
 
@@ -444,7 +444,7 @@ namespace PacketParser.PacketHandlers {
                          * http://www.nowsms.com/discus/messages/485/14998.html
                          * http://coding-talk.com/f46/check-isdn-10962/
                          **/
-                        if (!HttpPacketHandler.BoringXHeaders.Contains(headerName)) {
+                        if (!BoringXHeaders.Contains(headerName)) {
                             if (headerName.StartsWith("X-", StringComparison.InvariantCultureIgnoreCase)) {
                                 sourceHost.AddNumberedExtraDetail("HTTP header: " + headerName, httpHeaders[headerName]);
                             }
@@ -682,7 +682,7 @@ namespace PacketParser.PacketHandlers {
 
                                             string attributeValue = encodedMessage.Substring(startIndex, endIndex - startIndex);
                                             //replace some special characters
-                                            encodedMessage = encodedMessage.Replace("\\n", System.Environment.NewLine).Replace("\\r", "\r").Replace("\\t", "\t");
+                                            encodedMessage = encodedMessage.Replace("\\n", Environment.NewLine).Replace("\\r", "\r").Replace("\\t", "\t");
                                             mimeMultipart.Attributes.Add(attributeName, attributeValue);
                                         }
                                         //END OF AOL WEBMAIL CODE
@@ -701,10 +701,10 @@ namespace PacketParser.PacketHandlers {
                 try {
                     System.Collections.Specialized.NameValueCollection httpResponseNvc = new System.Collections.Specialized.NameValueCollection();
                     httpResponseNvc.Add("HTTP Response Status Code", httpPacket.StatusCode + " " + httpPacket.StatusMessage);
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, httpResponseNvc, httpPacket.ParentFrame.Timestamp, "HTTP Response"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, httpResponseNvc, httpPacket.ParentFrame.Timestamp, "HTTP Response"));
 
-                    System.Collections.Specialized.NameValueCollection httpHeaders = HttpPacketHandler.ParseHeaders(httpPacket);
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, httpHeaders, httpPacket.ParentFrame.Timestamp, "HTTP Header"));
+                    System.Collections.Specialized.NameValueCollection httpHeaders = ParseHeaders(httpPacket);
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(httpPacket.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, httpHeaders, httpPacket.ParentFrame.Timestamp, "HTTP Header"));
 
                 }
                 catch { };

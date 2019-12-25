@@ -427,7 +427,7 @@ namespace PacketParser.Packets {
         public byte[] GetTcpPacketPayloadData() {
             byte[] data=new byte[PacketEndIndex-PacketStartIndex-dataOffsetByteCount+1];
             for(int i=0; i<data.Length; i++)
-                data[i]=base.ParentFrame.Data[PacketStartIndex+dataOffsetByteCount+i];
+                data[i]= ParentFrame.Data[PacketStartIndex+dataOffsetByteCount+i];
             return data;
         }
 

@@ -65,7 +65,7 @@ namespace PacketParser {
                             this.server.NetworkServiceMetadataList[this.serverPort].ApplicationLayerProtocol = value;
                 }
             }
-            else if (value != PacketParser.ApplicationLayerProtocol.Unknown) {
+            else if (value != ApplicationLayerProtocol.Unknown) {
                 this.confirmedProtocol = value;
             }
         }

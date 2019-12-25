@@ -87,7 +87,7 @@ namespace SharedUtils {
                 }
                 this.valueLength = 0;
                 if (lengthBytes.Count > 0) {
-                    string lengthString = System.Text.ASCIIEncoding.ASCII.GetString(lengthBytes.ToArray());
+                    string lengthString = Encoding.ASCII.GetString(lengthBytes.ToArray());
                     if (lengthString.Length > 0)
                         this.valueLength = Int32.Parse(lengthString);
                 }
@@ -111,9 +111,9 @@ namespace SharedUtils {
 
         public object GetValue() {
             if (this.Type == TypeSuffix.ASCIIString)
-                return System.Text.ASCIIEncoding.ASCII.GetString(this.GetRawValue());
+                return Encoding.ASCII.GetString(this.GetRawValue());
             else if (this.Type == TypeSuffix.Boolean)
-                return Boolean.Parse(System.Text.ASCIIEncoding.ASCII.GetString(this.GetRawValue()));
+                return Boolean.Parse(Encoding.ASCII.GetString(this.GetRawValue()));
             else if (this.Type == TypeSuffix.Dictionary) {
                 Dictionary<string, object> dict = new Dictionary<string, object>();
                 lock (this.data) {
@@ -129,9 +129,9 @@ namespace SharedUtils {
                 return dict;
             }
             else if (this.Type == TypeSuffix.Float)
-                return float.Parse(System.Text.ASCIIEncoding.ASCII.GetString(this.GetRawValue()));
+                return float.Parse(Encoding.ASCII.GetString(this.GetRawValue()));
             else if (this.Type == TypeSuffix.Integer)
-                return Int32.Parse(System.Text.ASCIIEncoding.ASCII.GetString(this.GetRawValue()));
+                return Int32.Parse(Encoding.ASCII.GetString(this.GetRawValue()));
             else if (this.Type == TypeSuffix.List) {
                 List<object> list = new List<object>();
                 lock(this.data) {
@@ -146,7 +146,7 @@ namespace SharedUtils {
                 return list;
             }
             else if (this.Type == TypeSuffix.UTF8String)
-                return System.Text.UTF8Encoding.UTF8.GetString(this.GetRawValue());
+                return Encoding.UTF8.GetString(this.GetRawValue());
             else
                 return null;
         }

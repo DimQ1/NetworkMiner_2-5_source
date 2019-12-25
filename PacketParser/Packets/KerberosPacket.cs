@@ -114,7 +114,7 @@ namespace PacketParser.Packets {
                 int length = (int)(Utils.ByteConverter.ToUInt32(parentFrame.Data, packetStartIndex, 4) & 0x7fffff);
                 if (packetStartIndex + 4 + length > packetEndIndex + 1)
                     throw new IndexOutOfRangeException("Kerberos packet is truncated");
-                base.PacketEndIndex = packetStartIndex + 4 + length - 1;
+                PacketEndIndex = packetStartIndex + 4 + length - 1;
                 index += 4;
             }
             //read ASN.1 data

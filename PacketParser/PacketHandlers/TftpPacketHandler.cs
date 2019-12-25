@@ -39,7 +39,7 @@ namespace PacketParser.PacketHandlers {
 
             if(udpPacket!=null) {
                 FileTransfer.FileStreamAssembler assembler;
-                if(TryGetTftpFileStreamAssembler(out assembler, base.MainPacketHandler.FileStreamAssemblerList, sourceHost, udpPacket.SourcePort, destinationHost, udpPacket.DestinationPort) || (tftpPacket!=null && TryCreateNewAssembler(out assembler, base.MainPacketHandler.FileStreamAssemblerList, tftpPacket, sourceHost, udpPacket.SourcePort, destinationHost))) {
+                if(TryGetTftpFileStreamAssembler(out assembler, MainPacketHandler.FileStreamAssemblerList, sourceHost, udpPacket.SourcePort, destinationHost, udpPacket.DestinationPort) || (tftpPacket!=null && TryCreateNewAssembler(out assembler, MainPacketHandler.FileStreamAssemblerList, tftpPacket, sourceHost, udpPacket.SourcePort, destinationHost))) {
                     //we have an assembler!
                     string sessionId = this.GetTftpSessionId(sourceHost, udpPacket.SourcePort, destinationHost, udpPacket.DestinationPort);
                     ushort blksize = 512;//default
@@ -63,7 +63,7 @@ namespace PacketParser.PacketHandlers {
                     }
                     //see if we have an tftp pakcet and parse its file data
                     if(tftpPacket!=null) {
-                        ExtractFileData(assembler, base.MainPacketHandler.FileStreamAssemblerList, sourceHost, udpPacket.SourcePort, destinationHost, udpPacket.DestinationPort, tftpPacket);
+                        ExtractFileData(assembler, MainPacketHandler.FileStreamAssemblerList, sourceHost, udpPacket.SourcePort, destinationHost, udpPacket.DestinationPort, tftpPacket);
                     }
                 }
                 

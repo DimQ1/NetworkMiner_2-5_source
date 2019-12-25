@@ -48,7 +48,7 @@ namespace PacketParser.PacketHandlers {
             if (shimPacket != null && originalFrame != null) {
                 if (sortedPacketList.Count > 0) {
                     Frame innerFrame = originalFrame.CloneWithPacketList(sortedPacketList);
-                    base.MainPacketHandler.ParseFrame(innerFrame);
+                    MainPacketHandler.ParseFrame(innerFrame);
                 }
                 return shimPacket.ParsedBytesCount;
             }

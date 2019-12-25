@@ -43,7 +43,7 @@ namespace PacketParser.PacketHandlers {
                         sourceHost = tcpSession.Flow.FiveTuple.ServerHost;
                         destinationHost = tcpSession.Flow.FiveTuple.ClientHost;
                     }
-                    base.MainPacketHandler.OnMessageDetected(new PacketParser.Events.MessageEventArgs(ApplicationLayerProtocol.Oscar, sourceHost, destinationHost, oscarPacket.ParentFrame.FrameNumber, oscarPacket.ParentFrame.Timestamp, oscarPacket.SourceLoginId, oscarPacket.DestinationLoginId, oscarPacket.ImText, oscarPacket.ImText, Encoding.Default, oscarPacket.Attributes, oscarPacket.PacketLength));
+                    MainPacketHandler.OnMessageDetected(new PacketParser.Events.MessageEventArgs(ApplicationLayerProtocol.Oscar, sourceHost, destinationHost, oscarPacket.ParentFrame.FrameNumber, oscarPacket.ParentFrame.Timestamp, oscarPacket.SourceLoginId, oscarPacket.DestinationLoginId, oscarPacket.ImText, oscarPacket.ImText, Encoding.Default, oscarPacket.Attributes, oscarPacket.PacketLength));
                 }
                 return oscarPacket.BytesParsed;
             }

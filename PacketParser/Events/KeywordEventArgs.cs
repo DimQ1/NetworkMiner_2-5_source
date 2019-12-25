@@ -46,7 +46,7 @@ namespace PacketParser.Events {
             writer.WriteElementString("DestinationPort", this.DestinationPort.ToString());
             writer.WriteElementString("FrameNr", this.Frame.FrameNumber.ToString());
             writer.WriteElementString("Timestamp", this.Frame.Timestamp.ToString());
-            writer.WriteElementString("Context", PacketParser.Utils.StringManglerUtil.GetReadableContextString(this.Frame.Data, this.KeywordIndex, this.KeywordLength));
+            writer.WriteElementString("Context", Utils.StringManglerUtil.GetReadableContextString(this.Frame.Data, this.KeywordIndex, this.KeywordLength));
            
         }
     }

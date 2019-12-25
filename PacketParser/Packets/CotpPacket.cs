@@ -71,7 +71,7 @@ namespace PacketParser.Packets {
 
             AbstractPacket packet = null;
             if (this.encapsulatedProtocol == PayloadProtocol.RDP && this.GetTpdu() == Tpdu.ConnectionRequest)
-                packet = new RdpPacket.Cookie(base.ParentFrame, base.PacketStartIndex + 7, base.PacketEndIndex);
+                packet = new RdpPacket.Cookie(ParentFrame, PacketStartIndex + 7, PacketEndIndex);
             if(packet != null) {
                 yield return packet;
                 foreach (AbstractPacket subPacket in packet.GetSubPackets(false))

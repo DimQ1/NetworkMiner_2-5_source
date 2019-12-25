@@ -41,7 +41,7 @@ namespace PacketParser.PacketHandlers {
             }
 
             foreach (string anomaly in modbusPacket.Anomalies)
-                base.MainPacketHandler.OnAnomalyDetected(anomaly + " (frame " + modbusPacket.ParentFrame.FrameNumber + ")", modbusPacket.ParentFrame.Timestamp);
+                MainPacketHandler.OnAnomalyDetected(anomaly + " (frame " + modbusPacket.ParentFrame.FrameNumber + ")", modbusPacket.ParentFrame.Timestamp);
 
             System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
             //parameters.Add("Transaction ID", modbusPacket.TransactionID.ToString());
@@ -92,7 +92,7 @@ namespace PacketParser.PacketHandlers {
                 sourcePort = tcpSession.ServerTcpPort;
                 destinationPort = tcpSession.ClientTcpPort;
             }
-            base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(modbusPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, modbusPacket.ParentFrame.Timestamp, "Modbus/TCP Transaction ID: " + modbusPacket.TransactionID.ToString()));
+            MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(modbusPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, modbusPacket.ParentFrame.Timestamp, "Modbus/TCP Transaction ID: " + modbusPacket.TransactionID.ToString()));
 
             return Math.Min(modbusPacket.Length + 6, modbusPacket.PacketLength);
         }

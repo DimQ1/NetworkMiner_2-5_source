@@ -26,7 +26,7 @@ namespace PacketParser.Packets {
             if (!this.ParentFrame.QuickParse) {
                 
 
-                byte[] snmpAsn1Data = parentFrame.Data.Skip(packetStartIndex).Take(base.PacketLength).ToArray();
+                byte[] snmpAsn1Data = parentFrame.Data.Skip(packetStartIndex).Take(PacketLength).ToArray();
 
                 int index = 0;
                 List<byte[]> b = Utils.ByteConverter.GetAsn1DerSequenceTypes(snmpAsn1Data, ref index, new HashSet<byte>() { 2 });//2 == INTEGER

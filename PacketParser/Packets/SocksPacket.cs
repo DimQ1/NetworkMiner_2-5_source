@@ -252,9 +252,9 @@ namespace PacketParser.Packets {
                 else if (isLikelyInitialUsernamePasswordNegotiation(parentFrame, packetStartIndex, packetEndIndex)) {
                     //Username/Password subnegotiation
                     byte userLenght = parentFrame.Data[packetStartIndex + 1];
-                    this.username = System.Text.Encoding.ASCII.GetString(parentFrame.Data, PacketStartIndex + 2, userLenght);
+                    this.username = Encoding.ASCII.GetString(parentFrame.Data, PacketStartIndex + 2, userLenght);
                     byte passLength = parentFrame.Data[packetStartIndex + userLenght + 2];
-                    this.password = System.Text.Encoding.ASCII.GetString(parentFrame.Data, PacketStartIndex + userLenght + 3, passLength);
+                    this.password = Encoding.ASCII.GetString(parentFrame.Data, PacketStartIndex + userLenght + 3, passLength);
                     index = packetEndIndex + 1;
                 }
                 else if (method1OrRsv == 0) {
@@ -272,7 +272,7 @@ namespace PacketParser.Packets {
 
             }
             else {
-                if (base.PacketLength == 2 && parentFrame.Data[packetStartIndex] == 1 && parentFrame.Data[packetStartIndex + 1] == 0) {
+                if (PacketLength == 2 && parentFrame.Data[packetStartIndex] == 1 && parentFrame.Data[packetStartIndex + 1] == 0) {
                     //rfc1929 initial negotiation response
                     index = packetStartIndex + 2;
                 }
@@ -297,7 +297,7 @@ namespace PacketParser.Packets {
                         //METHOD selection message
                         index++;//just skip past the method selection
                     }
-                    else if (base.PacketLength > 6 && parentFrame.Data[packetStartIndex + 2] == 0) {
+                    else if (PacketLength > 6 && parentFrame.Data[packetStartIndex + 2] == 0) {
                         //SOCKS reply
                         this.commandOrReply = parentFrame.Data[packetStartIndex + 1];
                         byte atyp = parentFrame.Data[packetStartIndex + 3];
@@ -326,7 +326,7 @@ namespace PacketParser.Packets {
                 //read as a pascal string
                 byte length = data[index];
                 //we might wanna add support for punycode here to hanlde characters like едц
-                this.domainName = System.Text.Encoding.ASCII.GetString(data, index + 1, length);
+                this.domainName = Encoding.ASCII.GetString(data, index + 1, length);
                 this.port = Utils.ByteConverter.ToUInt16(data, index + length + 1, false);
                 return length + 3;
             }

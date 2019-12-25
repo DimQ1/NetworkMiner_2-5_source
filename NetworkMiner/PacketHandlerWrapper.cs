@@ -38,7 +38,7 @@ namespace NetworkMiner {
             this.pcapWriter=null;
             string exePath = System.IO.Path.GetFullPath(System.Windows.Forms.Application.ExecutablePath);
             if(this.parentForm == null || this.parentForm.GuiProperties == null)
-                this.packetHandler = new PacketParser.PacketHandler(exePath, outputDirectory.FullName, preloadedFingerprints, false, NetworkMiner.GuiProperties.ToDefaultTimeZoneString, useRelativePathIfAvailable);
+                this.packetHandler = new PacketParser.PacketHandler(exePath, outputDirectory.FullName, preloadedFingerprints, false, GuiProperties.ToDefaultTimeZoneString, useRelativePathIfAvailable);
             else
                 this.packetHandler = new PacketParser.PacketHandler(exePath, outputDirectory.FullName, preloadedFingerprints, false, this.parentForm.GuiProperties.ToCustomTimeZoneString, useRelativePathIfAvailable);
             
@@ -66,7 +66,7 @@ namespace NetworkMiner {
             this.packetHandler.MessageAttachmentDetected += new PacketParser.FileTransfer.FileStreamAssembler.FileReconsructedEventHandler(parentForm.ShowMessageAttachment);
             this.packetHandler.InsufficientWritePermissionsDetected += delegate (string path) {
                 parentForm.BeginInvoke((System.Windows.Forms.MethodInvoker)delegate {
-                    System.Windows.Forms.MessageBox.Show(parentForm, "User is unauthorized to access the following file:" + System.Environment.NewLine + path + System.Environment.NewLine + System.Environment.NewLine + "File(s) will not be extracted!", "Insufficient Write Permissions");
+                    System.Windows.Forms.MessageBox.Show(parentForm, "User is unauthorized to access the following file:" + Environment.NewLine + path + Environment.NewLine + Environment.NewLine + "File(s) will not be extracted!", "Insufficient Write Permissions");
                 });
             };
 

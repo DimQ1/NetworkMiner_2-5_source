@@ -34,7 +34,7 @@ namespace SharedUtils.Pcap {
 
         //public PcapFileWriter(string filename, PcapFrame.DataLinkTypeEnum dataLinkType) : this(filename, dataLinkType, System.IO.FileMode.Create, 262144){
         public PcapFileWriter(string filename, PcapFrame.DataLinkTypeEnum dataLinkType)
-            : this(filename, dataLinkType, System.IO.FileMode.Create, 8388608) {
+            : this(filename, dataLinkType, FileMode.Create, 8388608) {
             //nothing more needed
         }
         public PcapFileWriter(string filename, PcapFrame.DataLinkTypeEnum dataLinkType, System.IO.FileMode fileMode, int bufferSize)

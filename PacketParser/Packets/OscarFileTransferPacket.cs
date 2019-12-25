@@ -52,14 +52,14 @@ namespace PacketParser.Packets {
 
         internal OscarFileTransferPacket(Frame parentFrame, int packetStartIndex, int packetEndIndex)
             : base(parentFrame, packetStartIndex, packetEndIndex, "OSCAR File Transfer") {
-            System.Diagnostics.Debug.Assert(base.PacketLength >= 256);
+            System.Diagnostics.Debug.Assert(PacketLength >= 256);
             string oft2String = Utils.ByteConverter.ReadString(parentFrame.Data, packetStartIndex, 4);
             System.Diagnostics.Debug.Assert(oft2String.Equals("OFT2"));
             //skip 0x0100
             //get the type
             this.commandType = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 6);//0x0101
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Command Type", "0x"+this.commandType.ToString("X2"));
+                Attributes.Add("Command Type", "0x"+this.commandType.ToString("X2"));
             //skip 8 bytes File Handler cookie
             ushort encryption = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 16);
             ushort compression = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 18);
@@ -70,7 +70,7 @@ namespace PacketParser.Packets {
 
             this.totalFileSize = Utils.ByteConverter.ToUInt32(parentFrame.Data, packetStartIndex + 28);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Total File Size", this.totalFileSize.ToString());
+                Attributes.Add("Total File Size", this.totalFileSize.ToString());
             //skip a lot of stuff
             int index = packetStartIndex+68;
             string idString = Utils.ByteConverter.ReadNullTerminatedString(parentFrame.Data, ref index);
@@ -78,7 +78,7 @@ namespace PacketParser.Packets {
             index = packetStartIndex+192;
             this.fileName = Utils.ByteConverter.ReadNullTerminatedString(parentFrame.Data, ref index);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Filename", this.fileName);
+                Attributes.Add("Filename", this.fileName);
 
 
         }

@@ -111,7 +111,7 @@ namespace NetworkMiner {
                 this.VoipCall = voipCall;
 
                 DataGridViewImageCell playCell = new DataGridViewImageCell() {
-                    Value = NetworkMiner.Properties.Resources.PlayHS,
+                    Value = Properties.Resources.PlayHS,
                     //ToolTipText = "Play"
                 };
                 playCell.Style.BackColor = System.Drawing.SystemColors.ButtonFace;
@@ -119,23 +119,23 @@ namespace NetworkMiner {
                 playCell.AdjustCellBorderStyle(new DataGridViewAdvancedBorderStyle() { All = DataGridViewAdvancedCellBorderStyle.Single }, new DataGridViewAdvancedBorderStyle(), true, true, false, false);
 
                 DataGridViewImageCell stopCell = new DataGridViewImageCell() {
-                    Value = NetworkMiner.Properties.Resources.StopHS,
+                    Value = Properties.Resources.StopHS,
                     //ToolTipText = "Stop",
                 };
                 stopCell.Style.BackColor = System.Drawing.SystemColors.ButtonFace;
                 stopCell.Style.SelectionBackColor = stopCell.Style.BackColor;
 
-                base.Cells.Add(playCell);
-                base.Cells.Add(stopCell);
-                base.Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.From });
-                base.Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.To });
-                base.Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.toCustomTimeZoneStringFunction(voipCall.Start) });
-                base.Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.End.Subtract(voipCall.Start).ToString() });
-                base.Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.EncodingString });
-                base.Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.CallId });
-                base.Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.SourceHost.ToString() });
-                base.Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.DestinationkHost.ToString() });
-                base.Cells.Add(new DataGridViewButtonCell { Value = "Save .wav" });
+                Cells.Add(playCell);
+                Cells.Add(stopCell);
+                Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.From });
+                Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.To });
+                Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.toCustomTimeZoneStringFunction(voipCall.Start) });
+                Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.End.Subtract(voipCall.Start).ToString() });
+                Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.EncodingString });
+                Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.CallId });
+                Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.SourceHost.ToString() });
+                Cells.Add(new DataGridViewTextBoxCell { Value = voipCall.DestinationkHost.ToString() });
+                Cells.Add(new DataGridViewButtonCell { Value = "Save .wav" });
             }
 
             internal void Play() {

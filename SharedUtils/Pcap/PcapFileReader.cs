@@ -49,7 +49,7 @@ namespace SharedUtils.Pcap {
             this.filename = filename;
             this.fileStream = fileStream;
             //base.streamLength = fileStream.Length;
-            base.streamReadCompletedCallback = new StreamReadCompletedCallback(this.StreamReadCompletedCallbackHandler);
+            streamReadCompletedCallback = new StreamReadCompletedCallback(this.StreamReadCompletedCallbackHandler);
             this.caseFileLoadedCallback = readCompleteCallback;
         }
 

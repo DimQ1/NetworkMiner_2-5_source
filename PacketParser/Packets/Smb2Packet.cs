@@ -246,7 +246,7 @@ namespace PacketParser.Packets {
                     yield return this;
 
                 if (this.blobLength > 0 && this.blobOffset > 0) {
-                    SmbPacket.SecurityBlob securityBlob = new SmbPacket.SecurityBlob(this.ParentFrame, base.Smb2Packet.PacketStartIndex + this.blobOffset, this.PacketEndIndex);
+                    SmbPacket.SecurityBlob securityBlob = new SmbPacket.SecurityBlob(this.ParentFrame, Smb2Packet.PacketStartIndex + this.blobOffset, this.PacketEndIndex);
                     if (securityBlob != null) {
                         yield return securityBlob;
 
@@ -273,7 +273,7 @@ namespace PacketParser.Packets {
                     yield return this;
 
                 if (this.blobLength > 0 && this.blobOffset > 0) {
-                    SmbPacket.SecurityBlob securityBlob = new SmbPacket.SecurityBlob(this.ParentFrame, base.Smb2Packet.PacketStartIndex + this.blobOffset, this.PacketEndIndex);
+                    SmbPacket.SecurityBlob securityBlob = new SmbPacket.SecurityBlob(this.ParentFrame, Smb2Packet.PacketStartIndex + this.blobOffset, this.PacketEndIndex);
                     if (securityBlob != null) {
                         yield return securityBlob;
 
@@ -307,7 +307,7 @@ namespace PacketParser.Packets {
 
             internal Smb2TreeConnectResponse(Smb2Packet smb2Packet, int packetStartIndex, int packetEndIndex)
             : base(smb2Packet, packetStartIndex, packetEndIndex, "SMB2 Tree Connect Response") {
-                if (base.Smb2Packet.ntStatus == NT_STATUS_SUCCESS) {
+                if (Smb2Packet.ntStatus == NT_STATUS_SUCCESS) {
                     //success
                 }
             }
@@ -541,7 +541,7 @@ namespace PacketParser.Packets {
                 ushort searchPatternOffset = BitConverter.ToUInt16(this.ParentFrame.Data, PacketStartIndex + 24);//offset from start of SMB2 packet
                 ushort searchPatternLength = BitConverter.ToUInt16(this.ParentFrame.Data, PacketStartIndex + 26);
 
-                this.searchPattern = Utils.ByteConverter.ReadString(this.ParentFrame.Data, base.Smb2Packet.PacketStartIndex + searchPatternOffset, searchPatternLength, true, true);
+                this.searchPattern = Utils.ByteConverter.ReadString(this.ParentFrame.Data, Smb2Packet.PacketStartIndex + searchPatternOffset, searchPatternLength, true, true);
             }
 
             public override IEnumerable<AbstractPacket> GetSubPackets(bool includeSelfReference) {

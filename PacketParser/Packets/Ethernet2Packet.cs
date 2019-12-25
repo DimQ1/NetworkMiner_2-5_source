@@ -33,30 +33,30 @@ namespace PacketParser.Packets {
 
             try {
                 //if(this.ParentFrame.Data[PacketStartIndex+12]==0x08 && this.ParentFrame.Data[PacketStartIndex+13]==0x00) {
-                if (etherType == (ushort)Ethernet2Packet.EtherTypes.IPv4 && IPv4Packet.TryParse(parentFrame, newPacketStartIndex, newPacketEndIndex, out packet)) {
+                if (etherType == (ushort)EtherTypes.IPv4 && IPv4Packet.TryParse(parentFrame, newPacketStartIndex, newPacketEndIndex, out packet)) {
                     //IPv4 packet
                     //packet = new IPv4Packet(parentFrame, newPacketStartIndex, newPacketEndIndex);
                 }
-                else if (etherType == (ushort)Ethernet2Packet.EtherTypes.IPv6) {
+                else if (etherType == (ushort)EtherTypes.IPv6) {
                     //IPv6 packet
                     packet = new IPv6Packet(parentFrame, newPacketStartIndex, newPacketEndIndex);
                 }
                 //else if(this.ParentFrame.Data[PacketStartIndex+12]==0x08 && this.ParentFrame.Data[PacketStartIndex+13]==0x06) {
-                else if (etherType == (ushort)Ethernet2Packet.EtherTypes.ARP) {
+                else if (etherType == (ushort)EtherTypes.ARP) {
                     packet = new ArpPacket(parentFrame, newPacketStartIndex, newPacketEndIndex);
                     //ARP-packet
                 }
-                else if (etherType == (ushort)Ethernet2Packet.EtherTypes.IEEE802_1Q) {
+                else if (etherType == (ushort)EtherTypes.IEEE802_1Q) {
                     //VLAN
                     packet = new IEEE_802_1Q_VlanPacket(parentFrame, newPacketStartIndex, newPacketEndIndex);
                 }
-                else if (etherType == (ushort)Ethernet2Packet.EtherTypes.MPLS) {
+                else if (etherType == (ushort)EtherTypes.MPLS) {
                     packet = new Mpls(parentFrame, newPacketStartIndex, newPacketEndIndex);
                 }
-                else if (etherType == (ushort)Ethernet2Packet.EtherTypes.PPPoE) {
+                else if (etherType == (ushort)EtherTypes.PPPoE) {
                     packet = new PointToPointOverEthernetPacket(parentFrame, newPacketStartIndex, newPacketEndIndex);
                 }
-                else if (etherType == (ushort)Ethernet2Packet.EtherTypes.xHayesTunnel) {
+                else if (etherType == (ushort)EtherTypes.xHayesTunnel) {
                     packet = new Ethernet2Packet(parentFrame, newPacketStartIndex + 4, newPacketEndIndex);
                 }
                 //etherType might actually be a content length if it is an IEEE 802.3 packet

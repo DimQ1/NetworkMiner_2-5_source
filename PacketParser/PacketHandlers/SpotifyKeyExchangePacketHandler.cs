@@ -37,12 +37,12 @@ namespace PacketParser.PacketHandlers {
                             tcpSession.ClientHost.ExtraDetailsList.Add("Spotify application OS", spotifyPacket.ClientOperatingSystem);
                         NetworkCredential nc=new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, spotifyPacket.PacketTypeDescription, spotifyPacket.ClientUsername, spotifyPacket.ParentFrame.Timestamp);
                         nc.Password="Client DH public key: "+spotifyPacket.PublicKeyHexString;
-                        base.MainPacketHandler.AddCredential(nc);
+                        MainPacketHandler.AddCredential(nc);
                     }
                     else {
                         NetworkCredential nc=new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, spotifyPacket.PacketTypeDescription, spotifyPacket.ClientUsername, spotifyPacket.ParentFrame.Timestamp);
                         nc.Password="Server DH public key: "+spotifyPacket.PublicKeyHexString;
-                        base.MainPacketHandler.AddCredential(nc);
+                        MainPacketHandler.AddCredential(nc);
                     }
                     //this function will always return true for spotify packets since I don't want to cache a lot of packets!
                     return spotifyPacket.PacketLength;

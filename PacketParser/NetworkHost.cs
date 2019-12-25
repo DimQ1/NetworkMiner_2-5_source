@@ -889,7 +889,7 @@ namespace PacketParser {
             lock(this.hostNameList)
                 foreach (string hostname in this.hostNameList)
                     writer.WriteElementString("HostName", hostname);
-            if (this.OS != NetworkHost.OperatingSystemID.Unknown)
+            if (this.OS != OperatingSystemID.Unknown)
                 writer.WriteElementString("OS", this.IPAddress.ToString());
             if (!String.IsNullOrEmpty(this.DeviceCategory))
                 writer.WriteElementString("DeviceCategory", this.DeviceCategory);

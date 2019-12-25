@@ -268,12 +268,12 @@ namespace PacketParser.Packets {
             if (headerField.StartsWith("Host: ")) {//look for the host
                 this.requestedHost = headerField.Substring(6).Trim();
                 if (!this.ParentFrame.QuickParse)
-                    base.Attributes.Add("Requested Host", headerField.Substring(6).Trim());
+                    Attributes.Add("Requested Host", headerField.Substring(6).Trim());
             }
             else if (headerField.StartsWith("User-Agent: ", StringComparison.OrdinalIgnoreCase)) {
                 this.userAgentBanner = headerField.Substring(12).Trim();
                 if (!this.ParentFrame.QuickParse)
-                    base.Attributes.Add("User-Agent", this.userAgentBanner = headerField.Substring(12).Trim());
+                    Attributes.Add("User-Agent", this.userAgentBanner = headerField.Substring(12).Trim());
             }
             else if (headerField.StartsWith("Server: ", StringComparison.OrdinalIgnoreCase)) {
                 this.serverBanner = headerField.Substring(8).Trim();
@@ -408,9 +408,9 @@ namespace PacketParser.Packets {
                     if (charsetIndex > 0 && quoteIndex > 0) {
                         string charset = headerField.Substring(charsetIndex, quoteIndex - charsetIndex);
                         try {
-                            Encoding encoding = System.Text.Encoding.GetEncoding(charset);
+                            Encoding encoding = Encoding.GetEncoding(charset);
                             int extValueIndex = headerField.IndexOf('\'', quoteIndex + 1) + 1;
-                            byte[] extValueBytes = System.Text.Encoding.Default.GetBytes(headerField.Substring(extValueIndex));
+                            byte[] extValueBytes = Encoding.Default.GetBytes(headerField.Substring(extValueIndex));
                             string filename = encoding.GetString(extValueBytes);
                             filename = filename.Trim();
                             if (filename.StartsWith("\"") && filename.IndexOf('\"', 1) > 0)//get the string inside the quotations
@@ -592,7 +592,7 @@ namespace PacketParser.Packets {
             get { return this.packetHeaderIsComplete; }
         }
 
-        public int ParsedBytesCount { get { return base.PacketLength; } }
+        public int ParsedBytesCount { get { return PacketLength; } }
 
         #endregion
 

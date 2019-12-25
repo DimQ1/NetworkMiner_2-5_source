@@ -43,7 +43,7 @@ namespace PacketParser.Packets {
         if (this.innerEthernetPacket != null)
             yield return this.innerEthernetPacket;
         else if(this.vxlanNetworkIdentifier >= 0) {
-            this.innerEthernetPacket = new Ethernet2Packet(base.ParentFrame, base.PacketStartIndex + 8, base.PacketEndIndex);
+            this.innerEthernetPacket = new Ethernet2Packet(ParentFrame, PacketStartIndex + 8, PacketEndIndex);
             yield return this.innerEthernetPacket;
             foreach (AbstractPacket subPacket in this.innerEthernetPacket.GetSubPackets(false))
                 yield return subPacket;

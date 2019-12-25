@@ -339,8 +339,8 @@ namespace PacketParser.Packets {
 
             public ExceptionResponse(byte[] frameData, int functionCodeOffset)
                 : base(frameData, functionCodeOffset) {
-                if((int)base.functionCode > 0x80)
-                    base.functionCode = (FunctionCodeEnum)(base.functionCode - 0x80);
+                if((int)functionCode > 0x80)
+                    functionCode = (FunctionCodeEnum)(functionCode - 0x80);
                 this.exceptionCode = frameData[functionCodeOffset + 1];
             }
 

@@ -26,7 +26,7 @@ namespace PacketParser.Packets {
             //the most important part is to read the length in order to locate the starting point of the 802.11 packet
             this.radiotapHeaderLength = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 2, true);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Header length", radiotapHeaderLength.ToString());
+                Attributes.Add("Header length", radiotapHeaderLength.ToString());
 
             try {
                 this.fieldsPresentFlags = new System.Collections.Specialized.BitVector32((int)Utils.ByteConverter.ToUInt32(parentFrame.Data, 4, 4, true));

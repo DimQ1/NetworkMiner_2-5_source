@@ -31,7 +31,7 @@ namespace PacketParser.PacketHandlers {
                 if (p.GetType() == typeof(Packets.RdpPacket.Cookie)) {
                     rdpCookiePacket = (Packets.RdpPacket.Cookie)p;
                     if (rdpCookiePacket.RoutingCookie != null && rdpCookiePacket.RoutingCookie.Length > 0) {
-                        base.MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, "RDP Cookie", rdpCookiePacket.RoutingCookie, "", rdpCookiePacket.ParentFrame.Timestamp));
+                        MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, "RDP Cookie", rdpCookiePacket.RoutingCookie, "", rdpCookiePacket.ParentFrame.Timestamp));
                         if(rdpCookiePacket.RoutingCookie.Contains("=")) {
                             string[] parts = rdpCookiePacket.RoutingCookie.Split('=');
                             if(parts.Length > 1) {
@@ -48,7 +48,7 @@ namespace PacketParser.PacketHandlers {
                 }
             }
             if (parms.Count > 0 && rdpCookiePacket != null)
-                base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(rdpCookiePacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parms, rdpCookiePacket.ParentFrame.Timestamp, "RDP Cookie"));
+                MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(rdpCookiePacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parms, rdpCookiePacket.ParentFrame.Timestamp, "RDP Cookie"));
 
 
             return 0;//these bytes should already have been accounted for by the generic handler for TPKT

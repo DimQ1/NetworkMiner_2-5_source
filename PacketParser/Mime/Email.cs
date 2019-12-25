@@ -69,7 +69,7 @@ namespace PacketParser.Mime {
 
             //The open source .NET implementation Mono can crash if the strings contain Unicode chracters
             //see KeePass bug: https://sourceforge.net/p/keepass/feature-requests/2254/
-            foreach (Mime.MultipartPart multipart in Mime.PartBuilder.GetParts(ur, Utils.SystemHelper.IsRunningOnMono(), null)) {//I might need to add "ref customEncoding" as a parameter here
+            foreach (Mime.MultipartPart multipart in PartBuilder.GetParts(ur, Utils.SystemHelper.IsRunningOnMono(), null)) {//I might need to add "ref customEncoding" as a parameter here
                 
                 if (rootAttributes == null) {
 
@@ -148,7 +148,7 @@ namespace PacketParser.Mime {
             string charset = multipart.Attributes["charset"];
             if (charset != null && charset.Length > 0) {
                 try {
-                    customEncoding = System.Text.Encoding.GetEncoding(charset);
+                    customEncoding = Encoding.GetEncoding(charset);
                 }
                 catch { };
             }
@@ -178,7 +178,7 @@ namespace PacketParser.Mime {
                     boundary = mixedReader.ReadLine(200, customEncoding);
                 if (boundary != null && boundary.StartsWith("--")) {
                     boundary = boundary.Substring(2);
-                    List<Mime.MultipartPart> innerParts = new List<Mime.MultipartPart>(Mime.PartBuilder.GetParts(mixedReader, boundary, Utils.SystemHelper.IsRunningOnMono(), customEncoding));
+                    List<Mime.MultipartPart> innerParts = new List<Mime.MultipartPart>(PartBuilder.GetParts(mixedReader, boundary, Utils.SystemHelper.IsRunningOnMono(), customEncoding));
                     foreach (Mime.MultipartPart innerPart in innerParts) {
                         //a bit of recursion here
                         this.parseMultipart(innerPart, rootAttributes, tcpPacket, ref messageSentToPacketHandler, customEncoding, size, from, to, subject, messageId);
@@ -194,7 +194,7 @@ namespace PacketParser.Mime {
                     //textData = Utils.ByteConverter.ReadString();
                 }
                 else if (multipart.Attributes["Content-Transfer-Encoding"] == "base64") {
-                    textDataBytes = System.Convert.FromBase64String(Utils.ByteConverter.ReadString(multipart.Data));
+                    textDataBytes = Convert.FromBase64String(Utils.ByteConverter.ReadString(multipart.Data));
                     //textData = Utils.ByteConverter.ReadString();
                 }
                 else {
@@ -220,7 +220,7 @@ namespace PacketParser.Mime {
                     if (textData.Length > 0) {
 
                         //replace CR without LF with a NewLine of the local system
-                        textData = System.Text.RegularExpressions.Regex.Replace(textData, @"\r(?!\n)", System.Environment.NewLine);
+                        textData = System.Text.RegularExpressions.Regex.Replace(textData, @"\r(?!\n)", Environment.NewLine);
 
                         if (multipart.Attributes["format"]?.Equals("flowed", StringComparison.InvariantCultureIgnoreCase) == true) {
 

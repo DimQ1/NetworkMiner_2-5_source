@@ -22,13 +22,13 @@ namespace PacketParser.PacketHandlers {
              **/
 
             //dGVzdAB0ZXN0AHRlc3RwYXNz  => user = test, password = password
-            byte[] bytes = System.Convert.FromBase64String(base64);
+            byte[] bytes = Convert.FromBase64String(base64);
             if (bytes.Length > 3 && Array.IndexOf<byte>(bytes, 0, 2) > 0) {
                 int firstNullIndex = Array.IndexOf<byte>(bytes, 0);
                 int secondNullIndex = Array.IndexOf<byte>(bytes, 0, firstNullIndex + 1);
                 if (firstNullIndex >= 0 && secondNullIndex > 0) {
-                    string username = ASCIIEncoding.ASCII.GetString(bytes, firstNullIndex + 1, secondNullIndex - firstNullIndex - 1);
-                    string password = ASCIIEncoding.ASCII.GetString(bytes, secondNullIndex + 1, bytes.Length - secondNullIndex - 1);
+                    string username = Encoding.ASCII.GetString(bytes, firstNullIndex + 1, secondNullIndex - firstNullIndex - 1);
+                    string password = Encoding.ASCII.GetString(bytes, secondNullIndex + 1, bytes.Length - secondNullIndex - 1);
                     return new NetworkCredential(session.ClientHost, session.ServerHost, protocol.ToString(), username, password, frame.Timestamp);
                 }
             }
@@ -72,7 +72,7 @@ namespace PacketParser.PacketHandlers {
 
             internal new void AddData(byte[] buffer, int offset, int count) {
                 base.AddData(buffer, offset, count);
-                if (base.TerminatorFound)
+                if (TerminatorFound)
                     this.state = SmtpState.Footer;
             }
 
@@ -126,16 +126,16 @@ namespace PacketParser.PacketHandlers {
                         string base64Username = smtpPacket.ReadLine().Trim();
                         
                         try {
-                            byte[] usernameBytes = System.Convert.FromBase64String(base64Username);
-                            smtpSession.Username = System.Text.ASCIIEncoding.ASCII.GetString(usernameBytes);
+                            byte[] usernameBytes = Convert.FromBase64String(base64Username);
+                            smtpSession.Username = Encoding.ASCII.GetString(usernameBytes);
                         }
                         catch(FormatException e) { }
                     }
                     else if(smtpSession.State == SmtpSession.SmtpState.Password) {
                         string base64Password = smtpPacket.ReadLine().Trim();
                         try {
-                            byte[] passwordBytes = System.Convert.FromBase64String(base64Password);
-                            smtpSession.Password = System.Text.ASCIIEncoding.ASCII.GetString(passwordBytes);
+                            byte[] passwordBytes = Convert.FromBase64String(base64Password);
+                            smtpSession.Password = Encoding.ASCII.GetString(passwordBytes);
                         }
                         catch(FormatException e) { }
                     }
@@ -144,7 +144,7 @@ namespace PacketParser.PacketHandlers {
                         smtpSession.AddData(smtpPacket.ParentFrame.Data, smtpPacket.PacketStartIndex, smtpPacket.PacketLength);
                         //check if state has transitioned over to footer
                         if (smtpSession.State == SmtpSession.SmtpState.Footer) {
-                            Mime.Email email = new Mime.Email(smtpSession.DataStream, base.MainPacketHandler, tcpPacket, transferIsClientToServer, tcpSession, ApplicationLayerProtocol.Smtp, FileTransfer.FileStreamAssembler.FileAssmeblyRootLocation.destination);
+                            Mime.Email email = new Mime.Email(smtpSession.DataStream, MainPacketHandler, tcpPacket, transferIsClientToServer, tcpSession, ApplicationLayerProtocol.Smtp, FileTransfer.FileStreamAssembler.FileAssmeblyRootLocation.destination);
                         }
                     }
                     else {
@@ -163,8 +163,8 @@ namespace PacketParser.PacketHandlers {
                                     if(requestCommandAndArgument.Value.Length > "LOGIN ".Length) {
                                         try {
                                             string base64Username = requestCommandAndArgument.Value.Substring("LOGIN ".Length).Trim();
-                                            byte[] usernameBytes = System.Convert.FromBase64String(base64Username);
-                                            smtpSession.Username = System.Text.ASCIIEncoding.ASCII.GetString(usernameBytes);
+                                            byte[] usernameBytes = Convert.FromBase64String(base64Username);
+                                            smtpSession.Username = Encoding.ASCII.GetString(usernameBytes);
                                         }
                                         catch (ArgumentException) { }
                                     }
@@ -176,7 +176,7 @@ namespace PacketParser.PacketHandlers {
                                     if (requestCommandAndArgument.Value.Length > "PLAIN ".Length) {
                                         try {
                                             string base64 = requestCommandAndArgument.Value.Substring("PLAIN ".Length).Trim();
-                                            NetworkCredential cred = SmtpPacketHandler.ExtractBase64EncodedAuthPlainCredential(base64, smtpPacket.ParentFrame, tcpSession, ApplicationLayerProtocol.Smtp);
+                                            NetworkCredential cred = ExtractBase64EncodedAuthPlainCredential(base64, smtpPacket.ParentFrame, tcpSession, ApplicationLayerProtocol.Smtp);
                                             if (cred != null) {
                                                 //this.MainPacketHandler.OnCredentialDetected(new Events.CredentialEventArgs(cred));
                                                 this.MainPacketHandler.AddCredential(cred);
@@ -221,7 +221,7 @@ namespace PacketParser.PacketHandlers {
                                 smtpSession.State = SmtpSession.SmtpState.Password;
                         }
                         else if(replyCodeAndArgument.Key == 235) { //AUTHENTICATION SUCCESSFUL 
-                            base.MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, smtpPacket.PacketTypeDescription, smtpSession.Username, smtpSession.Password, smtpPacket.ParentFrame.Timestamp));
+                            MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, smtpPacket.PacketTypeDescription, smtpSession.Username, smtpSession.Password, smtpPacket.ParentFrame.Timestamp));
                             smtpSession.State = SmtpSession.SmtpState.Authenticated;
                         }
                         else if(replyCodeAndArgument.Key >= 500) //error

@@ -36,7 +36,7 @@ namespace PacketParser.PacketHandlers {
                     //TODO: figure out the five tuple!
                     Events.ParametersEventArgs pe = new Events.ParametersEventArgs(browser.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, browser.ParentFrame.Timestamp, "CIFS Browser/MS-BRWS Uptime");
                     //var pe = new Events.ParametersEventArgs(browser.ParentFrame.FrameNumber, ft, true, parameters, browser.ParentFrame.Timestamp, "CIFS Browser/MS-BRWS Uptime");
-                    base.MainPacketHandler.OnParametersDetected(pe);
+                    MainPacketHandler.OnParametersDetected(pe);
                 }
             }
             

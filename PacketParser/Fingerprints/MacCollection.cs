@@ -22,7 +22,7 @@ namespace PacketParser.Fingerprints {
 
                     //singletonInstance = new MacCollection(Path.GetDirectoryName(applicationExecutablePath) + "\\Fingerprints\\oui.txt", MacFingerprintFileFormat.Nmap);
                     //singletonInstance=new MacCollection(Path.GetDirectoryName(applicationExecutablePath)+"\\"+"oui.txt", MacFingerprintFileFormat.Nmap);
-                    singletonInstance = new MacCollection(Path.GetDirectoryName(applicationExecutablePath) + System.IO.Path.DirectorySeparatorChar + "Fingerprints" + System.IO.Path.DirectorySeparatorChar + "oui.txt", MacFingerprintFileFormat.IEEE_OUI);
+                    singletonInstance = new MacCollection(Path.GetDirectoryName(applicationExecutablePath) + Path.DirectorySeparatorChar + "Fingerprints" + Path.DirectorySeparatorChar + "oui.txt", MacFingerprintFileFormat.IEEE_OUI);
                 }
             }
             return singletonInstance;

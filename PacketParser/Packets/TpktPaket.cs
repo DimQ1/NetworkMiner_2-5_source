@@ -55,10 +55,10 @@ namespace PacketParser.Packets {
                 yield return this;
             AbstractPacket packet = null;
 
-            if (base.PacketLength >= this.length) {
+            if (PacketLength >= this.length) {
 
                 if (parentTcpPacket.DestinationPort == 3389 || parentTcpPacket.SourcePort == 3389)
-                    packet = new CotpPacket(base.ParentFrame, base.PacketStartIndex + 4, base.PacketStartIndex + this.length, CotpPacket.PayloadProtocol.RDP);
+                    packet = new CotpPacket(ParentFrame, PacketStartIndex + 4, PacketStartIndex + this.length, CotpPacket.PayloadProtocol.RDP);
 
                 if (packet != null) {
                     yield return packet;
@@ -71,12 +71,12 @@ namespace PacketParser.Packets {
         #region ISessionPacket Members
 
         public bool PacketHeaderIsComplete {
-            get { return base.PacketLength >= 4; }
+            get { return PacketLength >= 4; }
         }
 
         public int ParsedBytesCount {
             get {
-                if (base.PacketLength >= this.length)
+                if (PacketLength >= this.length)
                     return this.length;
                 else
                     return 0;

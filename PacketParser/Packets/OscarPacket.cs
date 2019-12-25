@@ -65,7 +65,7 @@ namespace PacketParser.Packets {
             //skip number in sequence (2 bytes) (wraps at 0x7fff)
             ushort dataSize = Utils.ByteConverter.ToUInt16(parentFrame.Data, PacketStartIndex + 4);
             this.bytesToParse=6+dataSize;
-            if(base.PacketLength < dataSize)
+            if(PacketLength < dataSize)
                 throw new Exception("Packet is not complete, wait for more TCP segments");
             int index = PacketStartIndex+6;
             //--FLAP HEADER END--//
@@ -86,7 +86,7 @@ namespace PacketParser.Packets {
                         string hexString = Utils.ByteConverter.ReadHexString(parentFrame.Data, (int)length, index);
                         string strString = Utils.ByteConverter.ReadString(parentFrame.Data, index, (int)length);
                         if (!this.ParentFrame.QuickParse)
-                            base.Attributes.Add(((SignonTags)tag).ToString(), hexString+" ("+strString+")");
+                            Attributes.Add(((SignonTags)tag).ToString(), hexString+" ("+strString+")");
                     }
                     index+=length;
                 }
@@ -113,7 +113,7 @@ namespace PacketParser.Packets {
                         //Destination loginId, who should receive the message
                         this.destinationLoginId = Utils.ByteConverter.ReadLengthValueString(parentFrame.Data, ref index, 1);
                         if (!this.ParentFrame.QuickParse)
-                            base.Attributes.Add("Destination User", this.destinationLoginId);
+                            Attributes.Add("Destination User", this.destinationLoginId);
                         //icbmTlvs [Class: ICBM__TAGS] Message data and parameters; it must contain either the IM or DATA tag
                         while(index < parentFrame.Data.Length && index < packetEndIndex && index < PacketStartIndex + this.bytesToParse) {
                             TagLengthValue tlv = new TagLengthValue(parentFrame.Data, ref index);
@@ -132,7 +132,7 @@ namespace PacketParser.Packets {
                                         ushort language = Utils.ByteConverter.ToUInt16(dataTlv.Value, 2);
                                         this.imText = Utils.ByteConverter.ReadString(dataTlv.Value, 4, dataTlv.Length - 4);
                                         if (!this.ParentFrame.QuickParse)
-                                            base.Attributes.Add("IM Text", this.imText);
+                                            Attributes.Add("IM Text", this.imText);
                                     }
                                 }
 
@@ -178,7 +178,7 @@ namespace PacketParser.Packets {
                                         ushort language = Utils.ByteConverter.ToUInt16(dataTlv.Value, 2);
                                         this.imText = Utils.ByteConverter.ReadString(dataTlv.Value, 4, dataTlv.Length - 4);
                                         if (!this.ParentFrame.QuickParse)
-                                            base.Attributes.Add("IM Text", this.imText);
+                                            Attributes.Add("IM Text", this.imText);
                                     }
                                 }
 

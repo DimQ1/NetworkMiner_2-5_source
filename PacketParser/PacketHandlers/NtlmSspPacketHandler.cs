@@ -67,14 +67,14 @@ namespace PacketParser.PacketHandlers {
                             lanManagerHashInfo = lanManagerHashInfo + "NTLM Response: " + ntlmPacket.NtlmResponse;
                         }
                         if (lanManagerHashInfo == null)
-                            base.MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "NTLMSSP", ntlmPacket.UserName, ntlmPacket.ParentFrame.Timestamp));
+                            MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "NTLMSSP", ntlmPacket.UserName, ntlmPacket.ParentFrame.Timestamp));
                         else {
                             if (ntlmChallengeList.ContainsKey(tcpSession.GetHashCode()))
                                 lanManagerHashInfo = "NTLM Challenge: " + ntlmChallengeList[tcpSession.GetHashCode()] + " - " + lanManagerHashInfo;
                             if (ntlmPacket.DomainName == null)
-                                base.MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "NTLMSSP", ntlmPacket.UserName, lanManagerHashInfo, ntlmPacket.ParentFrame.Timestamp));
+                                MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "NTLMSSP", ntlmPacket.UserName, lanManagerHashInfo, ntlmPacket.ParentFrame.Timestamp));
                             else
-                                base.MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "NTLMSSP", ntlmPacket.DomainName + "\\" + ntlmPacket.UserName, lanManagerHashInfo, ntlmPacket.ParentFrame.Timestamp));
+                                MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, "NTLMSSP", ntlmPacket.DomainName + "\\" + ntlmPacket.UserName, lanManagerHashInfo, ntlmPacket.ParentFrame.Timestamp));
                         }
                     }
                     successfullyExtractedBytes+=ntlmPacket.ParentFrame.Data.Length;//it's OK to return a larger value that what was parsed

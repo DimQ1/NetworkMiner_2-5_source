@@ -28,7 +28,7 @@ namespace PacketParser.PacketHandlers {
 
                     tmpCol.Add("Syslog Message", syslogPacket.SyslogMessage);
 
-                    base.MainPacketHandler.OnParametersDetected(new PacketParser.Events.ParametersEventArgs(syslogPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, udpPacket.TransportProtocol, udpPacket.SourcePort, udpPacket.DestinationPort, tmpCol, syslogPacket.ParentFrame.Timestamp, "Syslog Message"));
+                    MainPacketHandler.OnParametersDetected(new PacketParser.Events.ParametersEventArgs(syslogPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, udpPacket.TransportProtocol, udpPacket.SourcePort, udpPacket.DestinationPort, tmpCol, syslogPacket.ParentFrame.Timestamp, "Syslog Message"));
                     
                 }
             }

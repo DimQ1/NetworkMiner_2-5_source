@@ -63,7 +63,7 @@ namespace PacketParser.PacketHandlers {
                         if (imapPacket.FullRequestOrResponseLine != null && imapPacket.FullRequestOrResponseLine.Length > 0) {
                             System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
                             parameters.Add(imapPacket.Command.Value.ToString(), imapPacket.FullRequestOrResponseLine);
-                            base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(imapPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, imapPacket.ParentFrame.Timestamp, "IMAP Client Command"));
+                            MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(imapPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, imapPacket.ParentFrame.Timestamp, "IMAP Client Command"));
                         }
 
                         //remove any old email reassemblers since we have now received a new command
@@ -88,7 +88,7 @@ namespace PacketParser.PacketHandlers {
                                 string password = args[3].Trim(quoteChars);
                                 NetworkCredential cred = new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, "IMAP", username, password, imapPacket.ParentFrame.Timestamp);
                                 //base.MainPacketHandler.OnCredentialDetected(new Events.CredentialEventArgs(cred));
-                                base.MainPacketHandler.AddCredential(cred);
+                                MainPacketHandler.AddCredential(cred);
                             }
                         }
                     }
@@ -98,7 +98,7 @@ namespace PacketParser.PacketHandlers {
                             NetworkCredential cred = SmtpPacketHandler.ExtractBase64EncodedAuthPlainCredential(base64, imapPacket.ParentFrame, tcpSession, ApplicationLayerProtocol.Imap);
                             if (cred != null) {
                                 //base.MainPacketHandler.OnCredentialDetected(new Events.CredentialEventArgs(cred));
-                                base.MainPacketHandler.AddCredential(cred);
+                                MainPacketHandler.AddCredential(cred);
 
                                 if (imapPacket.ParsedBytesCount == 0)
                                     imapPacket.ParsedBytesCount = base64.Length + 2;//add CRLF
@@ -111,7 +111,7 @@ namespace PacketParser.PacketHandlers {
                     if (imapPacket.Result != null && imapPacket.FullRequestOrResponseLine != null && imapPacket.FullRequestOrResponseLine.Length > 0) {
                         System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
                         parameters.Add(imapPacket.Result.Value.ToString(), imapPacket.FullRequestOrResponseLine);
-                        base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(imapPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, imapPacket.ParentFrame.Timestamp, "IMAP Server Response"));
+                        MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(imapPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, imapPacket.ParentFrame.Timestamp, "IMAP Server Response"));
 
 
                         if (lastCommand.ContainsKey(tcpSession)) {
@@ -134,7 +134,7 @@ namespace PacketParser.PacketHandlers {
                         if (imapPacket.Command != null && imapPacket.FullRequestOrResponseLine != null && imapPacket.FullRequestOrResponseLine.Length > 0) {
                             System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
                             parameters.Add(imapPacket.Command.Value.ToString(), imapPacket.FullRequestOrResponseLine);
-                            base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(imapPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, imapPacket.ParentFrame.Timestamp, "IMAP Untagged Response"));
+                            MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(imapPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, imapPacket.ParentFrame.Timestamp, "IMAP Untagged Response"));
                         }
                         //the server might push an email here
                         if (imapPacket.BodyLength > 0) {
@@ -215,7 +215,7 @@ namespace PacketParser.PacketHandlers {
                     this.serverToClientEmailReassemblers.Remove(tcpSession);
                 }
 
-                Mime.Email email = new Mime.Email(reassembler, base.MainPacketHandler, tcpPacket, clientToServer, tcpSession, ApplicationLayerProtocol.Imap, assemblyLocation);
+                Mime.Email email = new Mime.Email(reassembler, MainPacketHandler, tcpPacket, clientToServer, tcpSession, ApplicationLayerProtocol.Imap, assemblyLocation);
                 /*
                 if (clientToServer) {
                     email = new Mime.Email(reassembler, base.MainPacketHandler, tcpPacket, tcpSession.ClientHost, tcpSession.ServerHost, tcpSession, ApplicationLayerProtocol.Imap, !clientToServer);

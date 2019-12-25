@@ -54,7 +54,7 @@ namespace PacketParser.PacketHandlers {
 
                     if (socksPacket.Username != null && socksPacket.Password != null) {
                         //base.MainPacketHandler.OnCredentialDetected(new Events.CredentialEventArgs(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, "SOCKS", socksPacket.Username, socksPacket.Password, socksPacket.ParentFrame.Timestamp)));
-                        base.MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, "SOCKS", socksPacket.Username, socksPacket.Password, socksPacket.ParentFrame.Timestamp));
+                        MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, "SOCKS", socksPacket.Username, socksPacket.Password, socksPacket.ParentFrame.Timestamp));
                     }
                 }
                 else {
@@ -64,12 +64,12 @@ namespace PacketParser.PacketHandlers {
                             KeyValuePair<System.Net.IPAddress, ushort> target = this.socksConnectIpPorts[tcpSession];
                             ushort serverPort = target.Value;
                             NetworkHost serverHost;
-                            if (base.MainPacketHandler.NetworkHostList.ContainsIP(target.Key))
-                                serverHost = base.MainPacketHandler.NetworkHostList.GetNetworkHost(target.Key);
+                            if (MainPacketHandler.NetworkHostList.ContainsIP(target.Key))
+                                serverHost = MainPacketHandler.NetworkHostList.GetNetworkHost(target.Key);
                             else
                                 serverHost = tcpSession.ClientHost;
 
-                            tcpSession.ProtocolFinder = new TcpPortProtocolFinder(tcpSession.Flow, tcpPacket.ParentFrame.FrameNumber, base.MainPacketHandler, serverHost, serverPort);
+                            tcpSession.ProtocolFinder = new TcpPortProtocolFinder(tcpSession.Flow, tcpPacket.ParentFrame.FrameNumber, MainPacketHandler, serverHost, serverPort);
                         }
                     }
                     else if (socksPacket.CommandOrReply == 1)

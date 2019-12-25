@@ -104,19 +104,19 @@ namespace PacketParser.Packets {
 
                 if (!this.ParentFrame.QuickParse) {
                     if (this.clientHostname.Length > 0)
-                        base.Attributes.Add("SQL client hostname", this.clientHostname);
+                        Attributes.Add("SQL client hostname", this.clientHostname);
                     if (this.username.Length > 0)
-                        base.Attributes.Add("SQL username", this.username);
+                        Attributes.Add("SQL username", this.username);
                     if (this.password.Length > 0)
-                        base.Attributes.Add("SQL password", this.password);
+                        Attributes.Add("SQL password", this.password);
                     if (this.appname.Length > 0)
-                        base.Attributes.Add("App name", this.appname);
+                        Attributes.Add("App name", this.appname);
                     if (this.serverHostname.Length > 0)
-                        base.Attributes.Add("SQL server", this.serverHostname);
+                        Attributes.Add("SQL server", this.serverHostname);
                     if (this.libraryName.Length > 0)
-                        base.Attributes.Add("SQL library", this.libraryName);
+                        Attributes.Add("SQL library", this.libraryName);
                     if (this.databaseName.Length > 0)
-                        base.Attributes.Add("Database name", this.databaseName);
+                        Attributes.Add("Database name", this.databaseName);
                 }
             }
 
@@ -130,10 +130,10 @@ namespace PacketParser.Packets {
         #region ISessionPacket Members
 
         public bool PacketHeaderIsComplete {
-            get { return base.PacketLength>=this.packetSize; }
+            get { return PacketLength >= this.packetSize; }
         }
 
-        public int ParsedBytesCount { get { return base.PacketLength; } }
+        public int ParsedBytesCount { get { return PacketLength; } }
 
         #endregion
 

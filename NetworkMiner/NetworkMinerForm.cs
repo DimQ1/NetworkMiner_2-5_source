@@ -307,7 +307,7 @@ namespace NetworkMiner
             {
                 this.preloadedFingerprints = preloadedFingerprints;
                 //we must recreate the PacketHandlerWrapper with the updated fingerprints
-                this.CreateNewPacketHandlerWrapper(new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath)));
+                this.CreateNewPacketHandlerWrapper(new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName(Application.ExecutablePath)));
             }
 
 
@@ -353,7 +353,10 @@ namespace NetworkMiner
             if (SharedUtils.Logger.CurrentLogLevel == SharedUtils.Logger.LogLevel.Debug && SharedUtils.Logger.LogToFile)
             {
                 var isoFileStore = SharedUtils.Logger.GetIsolatedStorageFile();
-                MessageBox.Show("Writing debug log to: " + Environment.NewLine + isoFileStore.GetType().GetField("m_RootDir", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(isoFileStore).ToString());
+                
+                var message = isoFileStore.GetType().GetFields(System.Reflection.BindingFlags.Instance| System.Reflection.BindingFlags.NonPublic).Where(f=>f.Name == "_rootDirectory").FirstOrDefault().GetValue(isoFileStore);
+                
+                MessageBox.Show($"Writing debug log to: {Environment.NewLine}{message}");
             }
 
             SharedUtils.Logger.Log("Initializing Component", SharedUtils.Logger.EventLogEntryType.Information);
@@ -415,7 +418,7 @@ namespace NetworkMiner
             try
             {
                 //require FileIOPermission to be PermissionState.Unrestricted
-                string path = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + System.IO.Path.DirectorySeparatorChar + PacketParser.FileTransfer.FileStreamAssembler.ASSMEBLED_FILES_DIRECTORY;
+                string path = System.IO.Path.GetDirectoryName(Application.ExecutablePath) + System.IO.Path.DirectorySeparatorChar + PacketParser.FileTransfer.FileStreamAssembler.ASSMEBLED_FILES_DIRECTORY;
                 System.Security.Permissions.FileIOPermission fileIOPerm = new System.Security.Permissions.FileIOPermission(System.Security.Permissions.FileIOPermissionAccess.AllAccess, path);
                 fileIOPerm.Demand();
             }
@@ -567,7 +570,7 @@ namespace NetworkMiner
             imageCommandStrip.Items.Add(imageZoomOutItem2);
             imagesListView.ContextMenuStrip = imageCommandStrip;
 
-            this.CreateNewPacketHandlerWrapper(new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath)));
+            this.CreateNewPacketHandlerWrapper(new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName(Application.ExecutablePath)));
 
             this.imagesListView.View = View.LargeIcon;
             this.imageList = new ImageList();
@@ -578,9 +581,9 @@ namespace NetworkMiner
 
 
             //this.networkAdaptersComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.hostSortOrderComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.hostSortOrderComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.hostSortOrderComboBox.SelectedIndex = 0;
-            this.cleartextSearchModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cleartextSearchModeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.cleartextSearchModeComboBox.SelectedIndex = 1;//Search TCP and UDP payload
 
 
@@ -592,8 +595,8 @@ namespace NetworkMiner
             List<string> dllDirectories = new List<string>();
             List<string> winPcapDllFiles = new List<string>();
             dllDirectories.Add(Environment.CurrentDirectory);
-            dllDirectories.Add(System.Windows.Forms.Application.ExecutablePath);
-            dllDirectories.Add(System.Windows.Forms.Application.StartupPath);
+            dllDirectories.Add(Application.ExecutablePath);
+            dllDirectories.Add(Application.StartupPath);
             winPcapDllFiles.Add("wpcap.dll");
             winPcapDllFiles.Add("packet.dll");
             string hijackedPath;
@@ -1062,7 +1065,7 @@ namespace NetworkMiner
 
         private void AddImage(TreeView treeView, string key, string imageFileName)
         {
-            treeView.ImageList.Images.Add(key, Image.FromFile(System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + System.IO.Path.DirectorySeparatorChar + "Images" + System.IO.Path.DirectorySeparatorChar + imageFileName));
+            treeView.ImageList.Images.Add(key, Image.FromFile(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + System.IO.Path.DirectorySeparatorChar + "Images" + System.IO.Path.DirectorySeparatorChar + imageFileName));
         }
 
         private void AddImage(TreeView treeView, string key, Icon icon)
@@ -1692,7 +1695,7 @@ namespace NetworkMiner
                     sb.Append(" ");
                 }
 
-                this.cleartextTextBox.ForeColor = System.Drawing.Color.Red;
+                this.cleartextTextBox.ForeColor = Color.Red;
 
                 this.cleartextQueue.Enqueue(sb.ToString());
             }
@@ -2138,7 +2141,7 @@ namespace NetworkMiner
                 if (System.IO.File.Exists(dictionaryFile))
                     dictionaryFileInfo = new System.IO.FileInfo(dictionaryFile);
                 else
-                    dictionaryFileInfo = new System.IO.FileInfo(System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + System.IO.Path.DirectorySeparatorChar + "CleartextTools" + System.IO.Path.DirectorySeparatorChar + dictionaryFile);
+                    dictionaryFileInfo = new System.IO.FileInfo(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + System.IO.Path.DirectorySeparatorChar + "CleartextTools" + System.IO.Path.DirectorySeparatorChar + dictionaryFile);
 
                 PacketParser.CleartextDictionary.WordDictionary d = new PacketParser.CleartextDictionary.WordDictionary();
                 if (System.IO.File.Exists(dictionaryFileInfo.FullName))
@@ -2572,7 +2575,7 @@ namespace NetworkMiner
             if (removeCapturedFiles)
             {
                 PacketParser.FileTransfer.FileStreamAssemblerList.RemoveTempFiles();
-                string capturesDirectory = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(System.Windows.Forms.Application.ExecutablePath)) + System.IO.Path.DirectorySeparatorChar + "Captures";
+                string capturesDirectory = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Application.ExecutablePath)) + System.IO.Path.DirectorySeparatorChar + "Captures";
                 if (System.IO.Directory.Exists(capturesDirectory))
                 {
                     foreach (string pcapFile in System.IO.Directory.GetFiles(capturesDirectory))
@@ -2633,7 +2636,7 @@ namespace NetworkMiner
                 keywordString += (char)frame.Data[keywordIndex + i];
                 keywordHexString += frame.Data[keywordIndex + i].ToString("X2");
             }
-            itemData[2] = System.Text.RegularExpressions.Regex.Replace(keywordString, @"[^ -~]", ".") + " [0x" + keywordHexString + "]";//regex from Eric Gunnerson's blog (which is really good)
+            itemData[2] = Regex.Replace(keywordString, @"[^ -~]", ".") + " [0x" + keywordHexString + "]";//regex from Eric Gunnerson's blog (which is really good)
 
             itemData[3] = PacketParser.Utils.StringManglerUtil.GetReadableContextString(frame.Data, keywordIndex, keywordLength);
             if (sourceHost != null)
@@ -3207,7 +3210,7 @@ namespace NetworkMiner
                 if (this.dataExporterFactory != null)
                 {
                     this.exportDataToFileDialog.FileName = basename + this.exportDataToFileDialog.DefaultExt;
-                    if (this.exportDataToFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (this.exportDataToFileDialog.ShowDialog() == DialogResult.OK)
                     {
 
                         List<CaseFile> caseFiles = new List<CaseFile>();
@@ -3248,7 +3251,7 @@ namespace NetworkMiner
                 if (this.dataExporterFactory != null)
                 {
                     this.exportDataToFileDialog.FileName = basename + this.exportDataToFileDialog.DefaultExt;
-                    if (this.exportDataToFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (this.exportDataToFileDialog.ShowDialog() == DialogResult.OK)
                     {
 
                         List<CaseFile> caseFiles = new List<CaseFile>();
@@ -3309,7 +3312,7 @@ namespace NetworkMiner
                 if (this.dataExporterFactory != null)
                 {
                     this.exportDataToFileDialog.FileName = "hosts" + this.exportDataToFileDialog.DefaultExt;
-                    if (this.exportDataToFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (this.exportDataToFileDialog.ShowDialog() == DialogResult.OK)
                     {
 
                         using (ToolInterfaces.IDataExporter exporter = this.dataExporterFactory.CreateDataExporter(this.exportDataToFileDialog.FileName, this.UseRelativeExtractedFilesPaths, this.guiProperties.PreserveLinesInCsvExport))
@@ -3382,7 +3385,7 @@ namespace NetworkMiner
 
         private void changeCleartextDictionaryButton_Click_1(object sender, EventArgs e)
         {
-            if (this.openTextFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (this.openTextFileDialog.ShowDialog() == DialogResult.OK)
             {
                 this.loadCleartextDictionary(this.openTextFileDialog.FileName, this.GuiProperties.UseCleartextTab);
             }
@@ -3426,7 +3429,7 @@ namespace NetworkMiner
 
         private void addKeywordsFromFileButton_Click(object sender, EventArgs e)
         {
-            if (this.openTextFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (this.openTextFileDialog.ShowDialog() == DialogResult.OK)
             {
                 if (this.openTextFileDialog.FileName != null && System.IO.File.Exists(this.openTextFileDialog.FileName))
                 {
@@ -3526,7 +3529,7 @@ namespace NetworkMiner
         private void messageAttachmentListView_MouseDown(object sender, MouseEventArgs e)
         {
             //we don't wanna do drag-and-drop on double clicks
-            if (e.Clicks == 1 && e.Button == System.Windows.Forms.MouseButtons.Left)
+            if (e.Clicks == 1 && e.Button == MouseButtons.Left)
             {
                 ListViewItem fileItem = this.messageAttachmentListView.GetItemAt(e.X, e.Y);
                 if (fileItem != null && fileItem.Tag != null)
@@ -3762,7 +3765,7 @@ finally {
 
         private void ImagesListView_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (System.Windows.Forms.Control.ModifierKeys == Keys.Control)
+            if (ModifierKeys == Keys.Control)
                 this.imageZoom(Math.Pow(1.2, 120.0 / e.Delta));
         }
 
@@ -3920,7 +3923,7 @@ finally {
             //this will check for the current .NET version for some reason?!
             //System.Reflection.Assembly.GetCallingAssembly().GetName().Version
             SharedUtils.Logger.Log("Manually checking for updates...", SharedUtils.Logger.EventLogEntryType.Information);
-            NetworkMiner.UpdateCheck.ShowNewVersionFormIfAvailableAsync(this, System.Reflection.Assembly.GetEntryAssembly().GetName().Version, true);
+            UpdateCheck.ShowNewVersionFormIfAvailableAsync(this, System.Reflection.Assembly.GetEntryAssembly().GetName().Version, true);
 
         }
 

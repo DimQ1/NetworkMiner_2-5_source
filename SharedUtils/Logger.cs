@@ -109,10 +109,8 @@ namespace SharedUtils {
         private static bool logToEventLog = false;
         public static bool LogToFile = false;
         public static string ApplicationName = null;
-        //private static object logFileLock = new object();
         private static readonly System.Threading.SemaphoreSlim logFileLock = new System.Threading.SemaphoreSlim(1, 1);
         private static int debugLogEventCount = 0;
-        //private static System.Diagnostics.EventLog applicationEventLog = null;
         private static Action<string, EventLogEntryType> eventLogWriteEntryAction = null;
 
         public static IsolatedStorageFile GetIsolatedStorageFile() {
@@ -122,13 +120,6 @@ namespace SharedUtils {
 
         public static void EnableEventLog(Action<string, EventLogEntryType> eventLogWriteEntry) {
             eventLogWriteEntryAction = eventLogWriteEntry;
-            /*
-            applicationEventLog = new System.Diagnostics.EventLog("Application");
-            if(ApplicationName == null)
-                applicationEventLog.Source = "Application";
-            else
-                applicationEventLog.Source = ApplicationName;
-            */
             logToEventLog = true;
         }
 
@@ -221,7 +212,7 @@ namespace SharedUtils {
         public static void ConsoleLog(string message, EventLogEntryType eventLogEntryType = EventLogEntryType.Information) {
             consoleOutLock.Wait();
             try {
-                System.Console.Out.WriteLine(GetConsoleLogString(message, eventLogEntryType));
+                Console.Out.WriteLine(GetConsoleLogString(message, eventLogEntryType));
             }
             finally {
                 consoleOutLock.Release();
@@ -231,7 +222,7 @@ namespace SharedUtils {
         public static async System.Threading.Tasks.Task ConsoleLogAsync(string message, EventLogEntryType eventLogEntryType) {
             await consoleOutLock.WaitAsync();
             try {
-                await System.Console.Out.WriteLineAsync(GetConsoleLogString(message, eventLogEntryType));
+                await Console.Out.WriteLineAsync(GetConsoleLogString(message, eventLogEntryType));
             }
             finally {
                 consoleOutLock.Release();
@@ -241,7 +232,7 @@ namespace SharedUtils {
         public static void StdErrLog(string message, EventLogEntryType eventLogEntryType = EventLogEntryType.Information) {
             consoleErrorLock.Wait();
             try {
-                System.Console.Error.WriteLine(GetConsoleLogString(message, eventLogEntryType));
+                Console.Error.WriteLine(GetConsoleLogString(message, eventLogEntryType));
             }
             finally {
                 consoleErrorLock.Release();
@@ -251,7 +242,7 @@ namespace SharedUtils {
         public static async System.Threading.Tasks.Task StdErrLogAsync(string message, EventLogEntryType eventLogEntryType) {
             await consoleErrorLock.WaitAsync();
             try {
-                await System.Console.Error.WriteLineAsync(GetConsoleLogString(message, eventLogEntryType));
+                await Console.Error.WriteLineAsync(GetConsoleLogString(message, eventLogEntryType));
             }
             finally {
                 consoleErrorLock.Release();

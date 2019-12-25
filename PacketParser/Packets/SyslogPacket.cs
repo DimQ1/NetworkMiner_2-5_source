@@ -14,7 +14,7 @@ namespace PacketParser.Packets {
                 if (packetEndIndex >= packetStartIndex) {
                     this.syslogMessage = Utils.ByteConverter.ReadString(parentFrame.Data, packetStartIndex, packetEndIndex - packetStartIndex + 1);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Message", this.syslogMessage);
+                    Attributes.Add("Message", this.syslogMessage);
                 }
         }
             

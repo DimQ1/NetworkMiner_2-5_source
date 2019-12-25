@@ -279,7 +279,7 @@ namespace PacketParser.Packets {
 
                 }
 
-                base.PacketEndIndex = index - 1;
+                PacketEndIndex = index - 1;
             }
 
         }

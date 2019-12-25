@@ -60,17 +60,17 @@ namespace PacketParser.PacketHandlers {
                     destinationHost.AddNumberedExtraDetail("SMB File Share", treeConnectRequest.ShareName);
                     System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
                     parameters.Add("SMB2 Connect Request " + treeConnectRequest.Smb2Packet.MessageID, treeConnectRequest.ShareName);
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 Tree Connect Request"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 Tree Connect Request"));
 
                 }
                 else if (p is Packets.Smb2Packet.Smb2TreeConnectResponse) {
                     Packets.Smb2Packet.Smb2TreeConnectResponse treeConnectResponse = (Packets.Smb2Packet.Smb2TreeConnectResponse)p;
                     string requestId = GetUniqueMessageId(tcpSession, treeConnectResponse.Smb2Packet.MessageID);
-                    if (treeConnectResponse.Smb2Packet.NtStatus == Smb2Packet.NT_STATUS_SUCCESS && this.requestCache.ContainsKey(requestId)) {
+                    if (treeConnectResponse.Smb2Packet.NtStatus == NT_STATUS_SUCCESS && this.requestCache.ContainsKey(requestId)) {
                         Packets.Smb2Packet.Smb2TreeConnectRequest treeConnectRequest = (Packets.Smb2Packet.Smb2TreeConnectRequest)this.requestCache[requestId];
                         System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
                         parameters.Add("SMB2 Connect " + treeConnectRequest.Smb2Packet.MessageID.ToString() + " Successful (Tree Id: 0x" + treeConnectResponse.Smb2Packet.TreeId.ToString("x8") + ")", treeConnectRequest.ShareName);
-                        base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 Tree Connect Response"));
+                        MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 Tree Connect Response"));
                     }
 
                 }
@@ -97,7 +97,7 @@ namespace PacketParser.PacketHandlers {
                                 System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
                                 //parameters.Add(fileId.ToString(), filename);
                                 parameters.Add(filename, "File ID: " + fileId.ToString());
-                                base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 Create Response"));
+                                MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 Create Response"));
                             }
                         }
                     }
@@ -175,7 +175,7 @@ namespace PacketParser.PacketHandlers {
 
                     System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
                     parameters.Add("SMB2 Search Pattern", findRequest.SearchPattern);
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 Find Request"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 Find Request"));
                 }
                 else if (p is Smb2FindResponse) {
                     Smb2FindResponse findResponse = (Smb2FindResponse)p;
@@ -191,12 +191,12 @@ namespace PacketParser.PacketHandlers {
 
                     foreach (Smb2FileInfo fi in findResponse.FileInfoList) {
                         if (fi.Data.Length > 0) {
-                            if (findRequest != null && findRequest.InfoLevel == (byte)Smb2Packet.Smb2FindRequest.InfoLevelEnum.NAME_INFO) {
+                            if (findRequest != null && findRequest.InfoLevel == (byte)Smb2FindRequest.InfoLevelEnum.NAME_INFO) {
                                 Packets.Smb2Packet.Smb2FileNameInfo nameInfoResponse = new Smb2FileNameInfo(fi.Data, 0, fi.Data.Length, findRequest.InfoLevel);
                                 parameters.Add("Search result for \""+findRequest.SearchPattern+"\"", nameInfoResponse.Filename);
 
                             }
-                            else if (findRequest != null && (findRequest.InfoLevel == (byte)Smb2Packet.Smb2FindRequest.InfoLevelEnum.BOTH_DIRECTORY_INFO || findRequest.InfoLevel == (byte)Smb2Packet.Smb2FindRequest.InfoLevelEnum.ID_BOTH_DIRECTORY_INFO)) {
+                            else if (findRequest != null && (findRequest.InfoLevel == (byte)Smb2FindRequest.InfoLevelEnum.BOTH_DIRECTORY_INFO || findRequest.InfoLevel == (byte)Smb2FindRequest.InfoLevelEnum.ID_BOTH_DIRECTORY_INFO)) {
                                 Packets.Smb2Packet.Smb2FileBothDirectoryInfo nameInfoResponse = new Smb2FileBothDirectoryInfo(fi.Data, 0, fi.Data.Length, findRequest.InfoLevel);
                                 parameters.Add("Search result for \"" + findRequest.SearchPattern + "\"", nameInfoResponse.Filename);
                                 parameters.Add(nameInfoResponse.Filename, "Created: " + nameInfoResponse.Created.ToString());
@@ -214,7 +214,7 @@ namespace PacketParser.PacketHandlers {
 
                     }
                     if (parameters.Count > 0)
-                        base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 File Info"));
+                        MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(p.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, p.ParentFrame.Timestamp, "SMB2 File Info"));
                 }
             }
             return 0;//NetBiosSessionServicePacketHandler will return the # parsed bytes anyway.
@@ -225,7 +225,7 @@ namespace PacketParser.PacketHandlers {
             FileTransfer.FileSegmentAssembler assembler = null;
             if (!this.fileSegmentAssemblerList.ContainsKey(uniqueFileId)) {
                 if (this.fileIdFilenameMap.ContainsKey(uniqueFileId)) {
-                    assembler = new FileTransfer.FileSegmentAssembler(this.fileOutputDirectory, tcpSession, fileTransferIsClientToServer, this.fileIdFilenameMap[uniqueFileId], uniqueFileId, base.MainPacketHandler.FileStreamAssemblerList, this.fileSegmentAssemblerList, FileTransfer.FileStreamTypes.SMB2, "SMB2 " + Enum.GetName(typeof(OP_CODE), smb2Command) +" " + fileId.ToString() + " \""+ this.fileIdFilenameMap[uniqueFileId]+"\"", null);
+                    assembler = new FileTransfer.FileSegmentAssembler(this.fileOutputDirectory, tcpSession, fileTransferIsClientToServer, this.fileIdFilenameMap[uniqueFileId], uniqueFileId, MainPacketHandler.FileStreamAssemblerList, this.fileSegmentAssemblerList, FileTransfer.FileStreamTypes.SMB2, "SMB2 " + Enum.GetName(typeof(OP_CODE), smb2Command) +" " + fileId.ToString() + " \""+ this.fileIdFilenameMap[uniqueFileId]+"\"", null);
                     this.fileSegmentAssemblerList.Add(uniqueFileId, assembler);
                 }
             }

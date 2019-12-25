@@ -67,7 +67,7 @@ namespace PacketParser.PacketHandlers {
                                 destinationHost = tcpSession.Flow.FiveTuple.ClientHost;
                             }
 
-                            base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(pop3Packet.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parms, pop3Packet.ParentFrame.Timestamp, "POP3 Command"));
+                            MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(pop3Packet.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parms, pop3Packet.ParentFrame.Timestamp, "POP3 Command"));
                             //See if there are additional lines after the command
 
 
@@ -247,7 +247,7 @@ namespace PacketParser.PacketHandlers {
                                         sourceHost = tcpSession.Flow.FiveTuple.ServerHost;
                                         destinationHost = tcpSession.Flow.FiveTuple.ClientHost;
                                     }
-                                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(pop3Packet.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parms, pop3Packet.ParentFrame.Timestamp, "POP3 Response"));
+                                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(pop3Packet.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parms, pop3Packet.ParentFrame.Timestamp, "POP3 Response"));
                                 }
                                     
                             }
@@ -293,7 +293,7 @@ namespace PacketParser.PacketHandlers {
             int addedBytes = reassembler.AddData(tcpPacket.ParentFrame.Data, emailStartIndex, length);
             if (reassembler.TerminatorFound) {
                 //I'm assuming the email is going from server to client
-                Mime.Email email = new Mime.Email(reassembler.DataStream, base.MainPacketHandler, tcpPacket, false, tcpSession, ApplicationLayerProtocol.Pop3, FileTransfer.FileStreamAssembler.FileAssmeblyRootLocation.source);
+                Mime.Email email = new Mime.Email(reassembler.DataStream, MainPacketHandler, tcpPacket, false, tcpSession, ApplicationLayerProtocol.Pop3, FileTransfer.FileStreamAssembler.FileAssmeblyRootLocation.source);
                 //remove the last command since we don't wanna reassemble any more for this RETR command
                 if(this.pop3LastCommand.ContainsKey(tcpSession))
                     this.pop3LastCommand.Remove(tcpSession);

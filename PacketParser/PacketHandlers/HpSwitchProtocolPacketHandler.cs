@@ -27,12 +27,12 @@ namespace PacketParser.PacketHandlers {
                         if(f.GetType()==typeof(Packets.HpSwitchProtocolPacket.HpSwField) && ((Packets.HpSwitchProtocolPacket.HpSwField)f).TypeByte==(byte)Packets.HpSwitchProtocolPacket.HpSwField.FieldType.IpAddress){
                             System.Net.IPAddress ip=new System.Net.IPAddress(((Packets.HpSwitchProtocolPacket.HpSwField)f).ValueBytes);
                             if(sourceHost==null || sourceHost.IPAddress!=ip){
-                                if(base.MainPacketHandler.NetworkHostList.ContainsIP(ip))
-                                    sourceHost=base.MainPacketHandler.NetworkHostList.GetNetworkHost(ip);
+                                if(MainPacketHandler.NetworkHostList.ContainsIP(ip))
+                                    sourceHost= MainPacketHandler.NetworkHostList.GetNetworkHost(ip);
                                 else{
                                     sourceHost=new NetworkHost(ip);
-                                    lock(base.MainPacketHandler.NetworkHostList)
-                                        base.MainPacketHandler.NetworkHostList.Add(sourceHost);
+                                    lock(MainPacketHandler.NetworkHostList)
+                                        MainPacketHandler.NetworkHostList.Add(sourceHost);
                                 }
                             }   
                         }

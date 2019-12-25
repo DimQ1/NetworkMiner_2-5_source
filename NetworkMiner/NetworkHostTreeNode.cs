@@ -68,7 +68,7 @@ namespace NetworkMiner {
                 return null;
         }
         private string GetOsImageKey() {
-            return NetworkHostTreeNode.GetOsImageKey(networkHost);
+            return GetOsImageKey(networkHost);
         }
 
         public static string GetOsImageKey(PacketParser.NetworkHost networkHost) {
@@ -133,7 +133,7 @@ namespace NetworkMiner {
 
                 TreeNode nicVendorNode;
                 string macVendor;
-                if (PacketParser.Fingerprints.MacCollection.GetMacCollection(System.IO.Path.GetFullPath(System.Windows.Forms.Application.ExecutablePath)).TryGetMacVendor(networkHost.MacAddress, out macVendor)) {
+                if (PacketParser.Fingerprints.MacCollection.GetMacCollection(System.IO.Path.GetFullPath(Application.ExecutablePath)).TryGetMacVendor(networkHost.MacAddress, out macVendor)) {
                     nicVendorNode = this.Nodes.Add("nicVendor", "NIC Vendor: " + macVendor, "nic", "nic");
                     nicVendorNode.Tag = macVendor;
                 }
@@ -141,7 +141,7 @@ namespace NetworkMiner {
                     nicVendorNode = this.Nodes.Add("nicVendor", "NIC Vendor: " + "Unknown", "nic", "nic");
                     nicVendorNode.Tag = "";
                 }
-                if (PacketParser.Fingerprints.MacAges.GetMacAges(System.IO.Path.GetFullPath(System.Windows.Forms.Application.ExecutablePath)).TryGetDateAndSource(networkHost.MacAddress.ToString(), out DateTime date, out string source)) {
+                if (PacketParser.Fingerprints.MacAges.GetMacAges(System.IO.Path.GetFullPath(Application.ExecutablePath)).TryGetDateAndSource(networkHost.MacAddress.ToString(), out DateTime date, out string source)) {
                     this.Nodes.Add("macAge", "MAC Age: " + date.ToShortDateString(), "nic", "nic");
                 }
             }

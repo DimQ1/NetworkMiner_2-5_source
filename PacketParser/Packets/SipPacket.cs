@@ -30,7 +30,7 @@ namespace PacketParser.Packets {
             int index = PacketStartIndex;
             this.messageLine = Utils.ByteConverter.ReadLine(parentFrame.Data, ref index, true);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Message Line", messageLine);
+                Attributes.Add("Message Line", messageLine);
 
             string headerLine = "dummy value";
             System.Collections.Specialized.NameValueCollection headerCollection = new System.Collections.Specialized.NameValueCollection();
@@ -60,7 +60,7 @@ namespace PacketParser.Packets {
                     }
                 }
             }
-            base.Attributes.Add(headerCollection);
+            Attributes.Add(headerCollection);
 
             //the rest is the message body
             if (this.contentLength > 0 && this.ContentType != null && this.ContentType.Equals("application/sdp", StringComparison.InvariantCultureIgnoreCase)) {

@@ -138,12 +138,12 @@ namespace PacketParser.PacketHandlers {
                             }
                             for(int i=0; i<parameters.Count; i++)
                                 attributes.Add("Parameter "+(i+1), parameters[i]);
-                            base.MainPacketHandler.OnMessageDetected(new PacketParser.Events.MessageEventArgs( ApplicationLayerProtocol.Irc, sourceHost, destinationHost, ircPacket.ParentFrame.FrameNumber, ircPacket.ParentFrame.Timestamp, from, parameters[0], parameters[1], parameters[1], attributes, ircPacket.PacketLength));
+                            MainPacketHandler.OnMessageDetected(new PacketParser.Events.MessageEventArgs( ApplicationLayerProtocol.Irc, sourceHost, destinationHost, ircPacket.ParentFrame.FrameNumber, ircPacket.ParentFrame.Timestamp, from, parameters[0], parameters[1], parameters[1], attributes, ircPacket.PacketLength));
                         }
                     }
                 }
                 if(tmpCol.Count > 0) {
-                    base.MainPacketHandler.OnParametersDetected(new PacketParser.Events.ParametersEventArgs(ircPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, tmpCol, tcpPacket.ParentFrame.Timestamp, "IRC packet"));
+                    MainPacketHandler.OnParametersDetected(new PacketParser.Events.ParametersEventArgs(ircPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, tmpCol, tcpPacket.ParentFrame.Timestamp, "IRC packet"));
                     return ircPacket.ParsedBytesCount;
                 }
             }

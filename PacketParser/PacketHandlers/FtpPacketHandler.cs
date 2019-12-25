@@ -220,7 +220,7 @@ namespace PacketParser.PacketHandlers {
                 }//end check for new FTP DATA sessions
                 else if(tcpPacket!=null && tcpPacket.FlagBits.Fin) {
                     //check if there is an FTP data session being closed
-                    if(this.MainPacketHandler.FileStreamAssemblerList.ContainsAssembler(tcpSession.Flow.FiveTuple, transferIsClientToServer, true, PacketParser.FileTransfer.FileStreamTypes.FTP)) {
+                    if(this.MainPacketHandler.FileStreamAssemblerList.ContainsAssembler(tcpSession.Flow.FiveTuple, transferIsClientToServer, true, FileTransfer.FileStreamTypes.FTP)) {
                         PacketParser.FileTransfer.FileStreamAssembler assembler=this.MainPacketHandler.FileStreamAssemblerList.GetAssembler(tcpSession.Flow.FiveTuple, transferIsClientToServer);
                         if(assembler.FileContentLength==-1 && assembler.FileSegmentRemainingBytes==-1)
                             //TODO: see if all data has been received or if the FIN arrived before the final data packet
@@ -255,7 +255,7 @@ namespace PacketParser.PacketHandlers {
                         if(ftpPacket.RequestArgument!=null) {
                             System.Collections.Specialized.NameValueCollection tmpCol=new System.Collections.Specialized.NameValueCollection();
                             tmpCol.Add(ftpPacket.RequestCommand, ftpPacket.RequestArgument);
-                            base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(ftpPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, tmpCol, ftpPacket.ParentFrame.Timestamp, "FTP Request"));
+                            MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(ftpPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, tmpCol, ftpPacket.ParentFrame.Timestamp, "FTP Request"));
                         }
                         if(ftpPacket.RequestCommand.ToUpper()=="USER") {//username
                             ftpSession.Username=ftpPacket.RequestArgument;
@@ -264,7 +264,7 @@ namespace PacketParser.PacketHandlers {
                         else if(ftpPacket.RequestCommand.ToUpper()=="PASS") {//password
                             ftpSession.Password=ftpPacket.RequestArgument;
                             if(ftpSession.Username!=null && ftpSession.Password!=null) {
-                                base.MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, ftpPacket.PacketTypeDescription, ftpSession.Username, ftpSession.Password, ftpPacket.ParentFrame.Timestamp));
+                                MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, ftpPacket.PacketTypeDescription, ftpSession.Username, ftpSession.Password, ftpPacket.ParentFrame.Timestamp));
                             }
 
                         }
@@ -367,7 +367,7 @@ namespace PacketParser.PacketHandlers {
                     else if(ftpPacket.ResponseCode==230) {//Login successful
                         //ftpSession.=ftpPacket.RequestArgument;
                         if(ftpSession.Username!=null && ftpSession.Password!=null) {
-                            base.MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, ftpPacket.PacketTypeDescription, ftpSession.Username, ftpSession.Password, true, ftpPacket.ParentFrame.Timestamp));
+                            MainPacketHandler.AddCredential(new NetworkCredential(tcpSession.ClientHost, tcpSession.ServerHost, ftpPacket.PacketTypeDescription, ftpSession.Username, ftpSession.Password, true, ftpPacket.ParentFrame.Timestamp));
                         }
 
                     }

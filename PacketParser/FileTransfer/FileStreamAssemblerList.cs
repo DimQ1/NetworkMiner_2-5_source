@@ -91,7 +91,7 @@ namespace PacketParser.FileTransfer {
         */
         internal bool ContainsAssembler(FiveTuple fiveTuple, bool transferIsClientToServer, bool assemblerIsAcive, FileStreamTypes fileStreamType) {
             string id = GetAssemblerId(fiveTuple, transferIsClientToServer);
-            return (base.ContainsKey(id) && base[id].FileStreamType == fileStreamType && base[id].IsActive == assemblerIsAcive);
+            return (ContainsKey(id) && base[id].FileStreamType == fileStreamType && base[id].IsActive == assemblerIsAcive);
         }
         /*
         internal bool ContainsAssembler(NetworkHost sourceHost, ushort sourcePort, NetworkHost destinationHost, ushort destinationPort, bool tcpTransfer) {
@@ -114,18 +114,18 @@ namespace PacketParser.FileTransfer {
         }
 
         private bool ContainsAssembler(string assemblerId, bool assemblerMustBeActive) {
-            return (base.ContainsKey(assemblerId) && (!assemblerMustBeActive || base[assemblerId].IsActive));
+            return (ContainsKey(assemblerId) && (!assemblerMustBeActive || base[assemblerId].IsActive));
         }
 
 
         internal void Remove(FileStreamAssembler assembler, bool closeAssembler) {
             string id=GetAssemblerId(assembler);
-            if(base.ContainsKey(id))
-                base.Remove(id);
+            if(ContainsKey(id))
+                Remove(id);
             if(closeAssembler)//it should sometimes be closed elsewhere
                 assembler.Clear();
             if (this.fileStreamAssemblerQueue.ContainsKey(id) && this.fileStreamAssemblerQueue[id].Count > 0)
-                base.Add(id, this.fileStreamAssemblerQueue[id].Dequeue());
+                Add(id, this.fileStreamAssemblerQueue[id].Dequeue());
         }
 
         
@@ -146,7 +146,7 @@ namespace PacketParser.FileTransfer {
         }
 
         internal IEnumerable<FileStreamAssembler> GetAssemblers(NetworkHost sourceHost, NetworkHost destinationHost, FileStreamTypes fileStreamType, bool isActive){
-            foreach(FileStreamAssembler assembler in base.GetValueEnumerator()) {
+            foreach(FileStreamAssembler assembler in GetValueEnumerator()) {
                 if(assembler.IsActive==isActive && assembler.SourceHost==sourceHost && assembler.DestinationHost==destinationHost && assembler.FileStreamType==fileStreamType)
                     yield return assembler;
             }
@@ -170,7 +170,7 @@ namespace PacketParser.FileTransfer {
         internal void Add(FileStreamAssembler assembler) {
             string id=GetAssemblerId(assembler);
 
-            base.Add(id, assembler);
+            Add(id, assembler);
         }
 
         
@@ -179,9 +179,9 @@ namespace PacketParser.FileTransfer {
         internal void ClearAll() {
             RemoveTempFiles();
 
-            foreach (FileStreamAssembler assembler in base.GetValueEnumerator())
+            foreach (FileStreamAssembler assembler in GetValueEnumerator())
                 assembler.Clear();
-            base.Clear();
+            Clear();
 
             this.partialFileAssemblerList.Clear();
             this.fileStreamAssemblerQueue.Clear();

@@ -41,7 +41,7 @@ namespace NetworkWrapper {
         public static List<IAdapter> GetAdapters(int millisecondsTimeout = 1000) {
             if (millisecondsTimeout > 0) {
                 //Let's wrap this peice of unmanaged code in a task in order to handle timeouts better
-                var getAdapterTask = System.Threading.Tasks.Task.Factory.StartNew<List<IAdapter>>(() => {
+                var getAdapterTask = Task.Factory.StartNew<List<IAdapter>>(() => {
                     //To use Nicolas .NET wrapper for WinPcap:
                     List<IAdapter> deviceList = new List<IAdapter>();
                     try

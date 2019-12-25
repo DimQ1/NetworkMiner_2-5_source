@@ -134,7 +134,7 @@ namespace PacketParser.Packets {
                 using (System.IO.MemoryStream handshakeMessageData = new System.IO.MemoryStream()) {
                     Frame firstFrame = null;
                     foreach (TlsRecordPacket record in tlsRecordFragments) {
-                        if (record.ContentType != TlsRecordPacket.ContentTypes.Handshake) {
+                        if (record.ContentType != ContentTypes.Handshake) {
                             yield break;
                         }
                         foreach (AbstractPacket recordData in record.GetSubPackets(false)) {

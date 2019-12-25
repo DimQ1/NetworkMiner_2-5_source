@@ -152,7 +152,7 @@ namespace PacketParser.Packets {
 
         internal string ReadLine() {
             int index=PacketStartIndex;
-            return Utils.ByteConverter.ReadLine(base.ParentFrame.Data, ref index);
+            return Utils.ByteConverter.ReadLine(ParentFrame.Data, ref index);
         }
 
         public override IEnumerable<AbstractPacket> GetSubPackets(bool includeSelfReference) {

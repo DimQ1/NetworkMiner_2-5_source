@@ -40,11 +40,11 @@ namespace PacketParser.Mime {
                 
                 //RFC 5987 specifies that recipients must support ISO-8859-1 and UTF-8 for HTTP.
                 try {
-                    return System.Text.Encoding.UTF8.GetString(lineBytes.ToArray(), 0, lineBytes.Count - 2);
+                    return Encoding.UTF8.GetString(lineBytes.ToArray(), 0, lineBytes.Count - 2);
                 }
                 catch {
                     try {
-                        return System.Text.Encoding.GetEncoding("iso-8859-1").GetString(lineBytes.ToArray(), 0, lineBytes.Count - 2);
+                        return Encoding.GetEncoding("iso-8859-1").GetString(lineBytes.ToArray(), 0, lineBytes.Count - 2);
                     }
                     catch {
                         StringBuilder sb = new StringBuilder(lineBytes.Count - 2);

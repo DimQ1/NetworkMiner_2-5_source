@@ -68,8 +68,8 @@ namespace PacketParser.Packets {
                 this.datagramLength = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 10);
                 this.packetOffset = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 12);
                 int index=packetStartIndex+14;
-                this.sourceName=NetBiosPacket.DecodeNetBiosName(parentFrame, ref index);
-                this.destinationName=NetBiosPacket.DecodeNetBiosName(parentFrame, ref index);
+                this.sourceName= DecodeNetBiosName(parentFrame, ref index);
+                this.destinationName= DecodeNetBiosName(parentFrame, ref index);
                 //skip user data...for now at least
                 if (index + 32 <= packetStartIndex + this.datagramLength && (messageType == (byte)MessageType.DirectUniqueDatagram || messageType == (byte)MessageType.DirectGroupDatagram)) {
                     //parse SMB
@@ -82,7 +82,7 @@ namespace PacketParser.Packets {
             }
             else if(messageType==(byte)MessageType.DatagramQueryRequest || messageType==(byte)MessageType.DatagramPositiveQueryResponse || messageType==(byte)MessageType.DatagramNegativeQueryResponse) {
                 int index=packetStartIndex+10;
-                this.destinationName=NetBiosPacket.DecodeNetBiosName(parentFrame, ref index);
+                this.destinationName= DecodeNetBiosName(parentFrame, ref index);
             }
         }
 

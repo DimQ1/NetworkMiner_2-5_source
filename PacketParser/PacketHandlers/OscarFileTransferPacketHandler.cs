@@ -41,30 +41,30 @@ namespace PacketParser.PacketHandlers {
             if(oscarFileTransferPacket!=null && tcpPacket!=null) {
                 parsedByteCount = oscarFileTransferPacket.ParsedBytesCount;
 
-                if(oscarFileTransferPacket.Type == PacketParser.Packets.OscarFileTransferPacket.CommandType.SendRequest) {
+                if(oscarFileTransferPacket.Type == Packets.OscarFileTransferPacket.CommandType.SendRequest) {
                     //see if there is an old assembler that needs to be removed
-                    if(base.MainPacketHandler.FileStreamAssemblerList.ContainsAssembler(tcpSession.Flow.FiveTuple, transferIsClientToServer)) {
-                        FileTransfer.FileStreamAssembler oldAssembler=base.MainPacketHandler.FileStreamAssemblerList.GetAssembler(tcpSession.Flow.FiveTuple, transferIsClientToServer);
-                        base.MainPacketHandler.FileStreamAssemblerList.Remove(oldAssembler, true);
+                    if(MainPacketHandler.FileStreamAssemblerList.ContainsAssembler(tcpSession.Flow.FiveTuple, transferIsClientToServer)) {
+                        FileTransfer.FileStreamAssembler oldAssembler= MainPacketHandler.FileStreamAssemblerList.GetAssembler(tcpSession.Flow.FiveTuple, transferIsClientToServer);
+                        MainPacketHandler.FileStreamAssemblerList.Remove(oldAssembler, true);
                     }
-                    FileTransfer.FileStreamAssembler assembler=new FileTransfer.FileStreamAssembler(base.MainPacketHandler.FileStreamAssemblerList, tcpSession.Flow.FiveTuple, transferIsClientToServer, FileTransfer.FileStreamTypes.OscarFileTransfer, oscarFileTransferPacket.FileName, "", (int)oscarFileTransferPacket.TotalFileSize, (int)oscarFileTransferPacket.TotalFileSize, oscarFileTransferPacket.FileName, "", oscarFileTransferPacket.ParentFrame.FrameNumber, oscarFileTransferPacket.ParentFrame.Timestamp, FileTransfer.FileStreamAssembler.FileAssmeblyRootLocation.source);
+                    FileTransfer.FileStreamAssembler assembler=new FileTransfer.FileStreamAssembler(MainPacketHandler.FileStreamAssemblerList, tcpSession.Flow.FiveTuple, transferIsClientToServer, FileTransfer.FileStreamTypes.OscarFileTransfer, oscarFileTransferPacket.FileName, "", (int)oscarFileTransferPacket.TotalFileSize, (int)oscarFileTransferPacket.TotalFileSize, oscarFileTransferPacket.FileName, "", oscarFileTransferPacket.ParentFrame.FrameNumber, oscarFileTransferPacket.ParentFrame.Timestamp, FileTransfer.FileStreamAssembler.FileAssmeblyRootLocation.source);
                     //assembler.SetRemainingBytesInFile((int)oscarFileTransferPacket.TotalFileSize);
-                    base.MainPacketHandler.FileStreamAssemblerList.Add(assembler);
+                    MainPacketHandler.FileStreamAssemblerList.Add(assembler);
                 }
-                else if(oscarFileTransferPacket.Type == PacketParser.Packets.OscarFileTransferPacket.CommandType.ReceiveAccept) {
+                else if(oscarFileTransferPacket.Type == Packets.OscarFileTransferPacket.CommandType.ReceiveAccept) {
                     //reverse the order here!
-                    if(base.MainPacketHandler.FileStreamAssemblerList.ContainsAssembler(tcpSession.Flow.FiveTuple, !transferIsClientToServer)) {
-                        FileTransfer.FileStreamAssembler assembler=base.MainPacketHandler.FileStreamAssemblerList.GetAssembler(tcpSession.Flow.FiveTuple, !transferIsClientToServer);
+                    if(MainPacketHandler.FileStreamAssemblerList.ContainsAssembler(tcpSession.Flow.FiveTuple, !transferIsClientToServer)) {
+                        FileTransfer.FileStreamAssembler assembler= MainPacketHandler.FileStreamAssemblerList.GetAssembler(tcpSession.Flow.FiveTuple, !transferIsClientToServer);
                         if(assembler != null)
                             assembler.TryActivate();
                     }
 
                 }
-                else if(oscarFileTransferPacket.Type == PacketParser.Packets.OscarFileTransferPacket.CommandType.TransferComplete) {
+                else if(oscarFileTransferPacket.Type == Packets.OscarFileTransferPacket.CommandType.TransferComplete) {
                     //remove assembler from destination to client
-                    if(base.MainPacketHandler.FileStreamAssemblerList.ContainsAssembler(tcpSession.Flow.FiveTuple, !transferIsClientToServer)) {
-                        FileTransfer.FileStreamAssembler oldAssembler=base.MainPacketHandler.FileStreamAssemblerList.GetAssembler(tcpSession.Flow.FiveTuple, !transferIsClientToServer);
-                        base.MainPacketHandler.FileStreamAssemblerList.Remove(oldAssembler, true);
+                    if(MainPacketHandler.FileStreamAssemblerList.ContainsAssembler(tcpSession.Flow.FiveTuple, !transferIsClientToServer)) {
+                        FileTransfer.FileStreamAssembler oldAssembler= MainPacketHandler.FileStreamAssemblerList.GetAssembler(tcpSession.Flow.FiveTuple, !transferIsClientToServer);
+                        MainPacketHandler.FileStreamAssemblerList.Remove(oldAssembler, true);
                     }
                 }
 

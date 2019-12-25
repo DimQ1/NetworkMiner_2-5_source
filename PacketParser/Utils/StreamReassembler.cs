@@ -36,7 +36,7 @@ namespace PacketParser.Utils {
         internal int AddData(byte[] buffer, int offset, int count) {
             List<byte> readBytes;
 
-            long terminatorIndex = Utils.KnuthMorrisPratt.ReadTo(DATA_TERMINATOR, buffer, offset, out readBytes);
+            long terminatorIndex = KnuthMorrisPratt.ReadTo(DATA_TERMINATOR, buffer, offset, out readBytes);
             int bytesRead = 0;
             //terminator might be split in between two packets
             if (terminatorIndex == -1 && this.dataStream.Length > 0) {
@@ -47,7 +47,7 @@ namespace PacketParser.Utils {
                 byte[] tempBuffer = new byte[oldBytesRead + buffer.Length - offset];
                 Array.Copy(oldBufferTail, 0, tempBuffer, 0, oldBytesRead);
                 Array.Copy(buffer, offset, tempBuffer, oldBytesRead, buffer.Length - offset);
-                long tempTerminatorIndex = Utils.KnuthMorrisPratt.ReadTo(DATA_TERMINATOR, tempBuffer, 0, out readBytes);
+                long tempTerminatorIndex = KnuthMorrisPratt.ReadTo(DATA_TERMINATOR, tempBuffer, 0, out readBytes);
                 if (tempTerminatorIndex >= 0) {
                     bytesRead = (int)tempTerminatorIndex - oldBytesRead + DATA_TERMINATOR.Length;
                     count = (int)tempTerminatorIndex - oldBytesRead + this.postTerminatorSkipBytes;

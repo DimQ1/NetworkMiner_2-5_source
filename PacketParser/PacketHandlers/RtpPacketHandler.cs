@@ -60,7 +60,7 @@ namespace PacketParser.PacketHandlers {
 
                             audioStream = new AudioStream(sourceHost, destinationHost, payloadType, MainPacketHandler.FileStreamAssemblerList, fiveTuple, rtpPacket.ParentFrame.FrameNumber);
                             this.audioStreams.Add(key, audioStream);
-                            base.MainPacketHandler.OnAudioDetected(audioStream);
+                            MainPacketHandler.OnAudioDetected(audioStream);
                         }
 
                         audioStream.AddSamples(rtpPacket.ParentFrame.Data.Skip(rtpPacket.PacketStartIndex + Packets.RtpPacket.HEADER_LENGTH).ToArray(), rtpPacket.SampleTick, rtpPacket.ParentFrame.Timestamp, rtpPacket.SyncSourceID);

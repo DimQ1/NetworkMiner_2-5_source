@@ -19,7 +19,7 @@ namespace SharedUtils
         public static Version GetLatestVersion(string productCode, out string releasePost, out string downloadUrl) {
 #if DEBUG
             //string requestURL = "http://localhost:57978/updatecheck.ashx?l=" + System.Web.HttpUtility.UrlEncode(productCode);
-            string requestURL = "https://www.netresec.com/updatecheck.ashx?l=" + System.Web.HttpUtility.UrlEncode(productCode);
+            string requestURL = "https://www.netresec.com/updatecheck.ashx?l=" + HttpUtility.UrlEncode(productCode);
 #else
             string requestURL = "https://www.netresec.com/updatecheck.ashx?l=" + System.Web.HttpUtility.UrlEncode(productCode);
 #endif
@@ -35,7 +35,7 @@ namespace SharedUtils
                 ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
             Logger.Log("ServicePointManager.SecurityProtocol = " + ServicePointManager.SecurityProtocol.ToString(), Logger.EventLogEntryType.Information);
-            System.Net.HttpWebRequest request = System.Net.WebRequest.Create(requestURL) as System.Net.HttpWebRequest;
+            System.Net.HttpWebRequest request = WebRequest.Create(requestURL) as System.Net.HttpWebRequest;
 
             string versionString = null;
 

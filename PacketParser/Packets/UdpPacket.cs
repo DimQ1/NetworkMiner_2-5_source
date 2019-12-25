@@ -42,7 +42,7 @@ namespace PacketParser.Packets {
                 //use the smallest value..
                 if(packetEndIndex>packetStartIndex+length-1) {
                     packetEndIndex=packetStartIndex+length-1;
-                    base.PacketEndIndex=packetEndIndex;
+                    PacketEndIndex = packetEndIndex;
                 }
             }
             this.checksum = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 6);

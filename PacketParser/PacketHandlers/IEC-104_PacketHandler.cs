@@ -299,7 +299,7 @@ namespace PacketParser.PacketHandlers {
                     }
                 }
                 catch (Exception) {
-                    base.MainPacketHandler.OnAnomalyDetected("Incorrect IEC 60870-5-104 ASDU Information Object in Frame " + iec104Packet.ParentFrame.FrameNumber, iec104Packet.ParentFrame.Timestamp);
+                    MainPacketHandler.OnAnomalyDetected("Incorrect IEC 60870-5-104 ASDU Information Object in Frame " + iec104Packet.ParentFrame.FrameNumber, iec104Packet.ParentFrame.Timestamp);
                 }
                 /*
                 ushort sourcePort = 0;
@@ -324,7 +324,7 @@ namespace PacketParser.PacketHandlers {
                 }
                 */
                 if(parameters.Count > 0)
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(iec104Packet.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, iec104Packet.ParentFrame.Timestamp, details));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(iec104Packet.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, iec104Packet.ParentFrame.Timestamp, details));
             }
             return Math.Min(iec104Packet.ApduLength + 2, iec104Packet.PacketLength);
         }

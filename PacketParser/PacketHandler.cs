@@ -56,7 +56,7 @@ namespace PacketParser {
 
         public long FramesToParseQueuedByteCount {
             get {
-                return System.Threading.Interlocked.Read(ref this.framesToParseQueuedByteCount);
+                return Interlocked.Read(ref this.framesToParseQueuedByteCount);
             }
         }
 
@@ -227,12 +227,12 @@ namespace PacketParser {
             //this.framesToParseQueueEvent = new System.Threading.AutoResetEvent(false);
             //this.receivedPacketsQueueEvent = new System.Threading.AutoResetEvent(false);
 
-            string applicationDirectory = Path.GetDirectoryName(applicationExecutablePath) + System.IO.Path.DirectorySeparatorChar;
-            this.FingerprintsPath = applicationDirectory + "Fingerprints" + System.IO.Path.DirectorySeparatorChar;
+            string applicationDirectory = Path.GetDirectoryName(applicationExecutablePath) + Path.DirectorySeparatorChar;
+            this.FingerprintsPath = applicationDirectory + "Fingerprints" + Path.DirectorySeparatorChar;
 
-            if (!outputPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
-                outputPath += System.IO.Path.DirectorySeparatorChar.ToString();
-            this.outputDirectory = Path.GetDirectoryName(outputPath) + System.IO.Path.DirectorySeparatorChar;
+            if (!outputPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                outputPath += Path.DirectorySeparatorChar.ToString();
+            this.outputDirectory = Path.GetDirectoryName(outputPath) + Path.DirectorySeparatorChar;
             this.osFingerprintCollectionList=new List<Fingerprints.IOsFingerprinter>();
             if (preloadedFingerprints != null)
                 this.osFingerprintCollectionList.AddRange(preloadedFingerprints);
@@ -246,10 +246,10 @@ namespace PacketParser {
             try {
                 //Check CERT NetSA p0f database https://tools.netsa.cert.org/confluence/display/tt/p0f+fingerprints
                 string netsaP0fFile = this.FingerprintsPath + "p0f.fp.netsa";
-                if (System.IO.File.Exists(netsaP0fFile))
-                    osFingerprintCollectionList.Add(new Fingerprints.P0fOsFingerprintCollection(netsaP0fFile, applicationDirectory + System.IO.Path.DirectorySeparatorChar + "Fingerprints" + System.IO.Path.DirectorySeparatorChar + "p0fa.fp", "p0f (NetSA)", 0.4));
+                if (File.Exists(netsaP0fFile))
+                    osFingerprintCollectionList.Add(new Fingerprints.P0fOsFingerprintCollection(netsaP0fFile, applicationDirectory + Path.DirectorySeparatorChar + "Fingerprints" + Path.DirectorySeparatorChar + "p0fa.fp", "p0f (NetSA)", 0.4));
                 else
-                    osFingerprintCollectionList.Add(new Fingerprints.P0fOsFingerprintCollection(this.FingerprintsPath + "p0f.fp", applicationDirectory + System.IO.Path.DirectorySeparatorChar + "Fingerprints" + System.IO.Path.DirectorySeparatorChar + "p0fa.fp"));
+                    osFingerprintCollectionList.Add(new Fingerprints.P0fOsFingerprintCollection(this.FingerprintsPath + "p0f.fp", applicationDirectory + Path.DirectorySeparatorChar + "Fingerprints" + Path.DirectorySeparatorChar + "p0fa.fp"));
                 osFingerprintCollectionList.Add(new Fingerprints.SatoriDhcpOsFingerprinter(this.FingerprintsPath + "dhcp.xml"));
                 osFingerprintCollectionList.Add(new Fingerprints.SatoriTcpOsFingerprinter(this.FingerprintsPath + "tcp.xml"));
             }
@@ -260,7 +260,7 @@ namespace PacketParser {
             //this.networkTcpSessionDictionary=new Dictionary<int, NetworkTcpSession>();
             this.networkTcpSessionList=new PopularityList<int, NetworkTcpSession>(200);
             this.networkTcpSessionList.PopularityLost+=new PopularityList<int, NetworkTcpSession>.PopularityLostEventHandler(networkTcpSessionList_PopularityLost);
-            this.fileStreamAssemblerList = new FileTransfer.FileStreamAssemblerList(this, 100, this.outputDirectory + PacketParser.FileTransfer.FileStreamAssembler.ASSMEBLED_FILES_DIRECTORY + System.IO.Path.DirectorySeparatorChar);
+            this.fileStreamAssemblerList = new FileTransfer.FileStreamAssemblerList(this, 100, this.outputDirectory + FileTransfer.FileStreamAssembler.ASSMEBLED_FILES_DIRECTORY + Path.DirectorySeparatorChar);
             this.fileStreamAssemblerList.PopularityLost += this.FileStreamAssemblerList_PopularityLost;
             this.reconstructedFileList=new List<FileTransfer.ReconstructedFile>();
             this.credentialList=new SortedList<string, NetworkCredential>();
@@ -320,16 +320,6 @@ namespace PacketParser {
                 auFile.FinishAssembling();
             }
         }
-
-        /*
-        [Obsolete("This function no longer has any effect now that the queue is replaced with a BlockingCollection")]
-        public System.Threading.AutoResetEvent SetFramesToParseSignalThreshold(int threshold) {
-            
-            this.framesToParseThresholdSignaller = new Utils.QueueThresholdSignaller<Frame>(this.framesToParseQueue, threshold);
-            return this.framesToParseThresholdSignaller.BelowThresholdEvent;
-            
-        }
-        */
 
         void networkTcpSessionList_PopularityLost(int key, NetworkTcpSession value) {
             value.Close();
@@ -533,7 +523,7 @@ namespace PacketParser {
             if(frame!=null) {
 
                 this.framesToParseQueue.Add(frame);
-                System.Threading.Interlocked.Add(ref this.framesToParseQueuedByteCount, frame.Data.Length);
+                Interlocked.Add(ref this.framesToParseQueuedByteCount, frame.Data.Length);
 
             }
         }
@@ -542,7 +532,7 @@ namespace PacketParser {
                 while (true) {
                     
                     Frame f = framesToParseQueue.Take();
-                    System.Threading.Interlocked.Add(ref this.framesToParseQueuedByteCount, -f.Data.Length);
+                    Interlocked.Add(ref this.framesToParseQueuedByteCount, -f.Data.Length);
                     UpdateBufferUsagePercent();
                     this.ParseFrame(f);
                 }
@@ -1130,7 +1120,7 @@ namespace PacketParser {
         internal void AddReconstructedFile(FileTransfer.ReconstructedFile file) {
             //let's timestomp the last write time of the file before passing it on
             try {
-                System.IO.File.SetLastWriteTime(file.FilePath, file.Timestamp);
+                File.SetLastWriteTime(file.FilePath, file.Timestamp);
             }
             catch (Exception e) {
                 this.OnAnomalyDetected("Error timestomping reconstructed file: " + e.Message);

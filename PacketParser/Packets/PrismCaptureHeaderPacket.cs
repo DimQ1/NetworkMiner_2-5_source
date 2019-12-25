@@ -18,12 +18,12 @@ namespace PacketParser.Packets {
                 this.messageLength = Utils.ByteConverter.ToUInt32(parentFrame.Data, PacketStartIndex + 4, 4, true);
             this.device = Utils.ByteConverter.ReadString(parentFrame.Data, PacketStartIndex + 8, 16, false, false);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Device", device);
+                Attributes.Add("Device", device);
             //skip host timestamp. 12 bytes
             //skip MAC timestamp. 12 bytes
             this.channel = Utils.ByteConverter.ToUInt32(parentFrame.Data, PacketStartIndex + 56, 4, true);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Channel", channel.ToString());
+                Attributes.Add("Channel", channel.ToString());
 
         }
 

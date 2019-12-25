@@ -21,11 +21,11 @@ namespace PacketParser.Packets {
             : base(parentFrame, packetStartIndex, packetEndIndex, "PPI") {
                 this.ppiLength = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 2, true);
                 if (!this.ParentFrame.QuickParse)
-                    base.Attributes.Add("Length", "" + ppiLength);
+                Attributes.Add("Length", "" + ppiLength);
                 uint dataLinkTypeUInt = Utils.ByteConverter.ToUInt32(parentFrame.Data, packetStartIndex + 4, 4, true);
                 this.dataLinkType = (PcapFrame.DataLinkTypeEnum)dataLinkTypeUInt;
                 if (!this.ParentFrame.QuickParse)
-                    base.Attributes.Add("Data Link Type", dataLinkType.ToString());
+                Attributes.Add("Data Link Type", dataLinkType.ToString());
         }
 
 

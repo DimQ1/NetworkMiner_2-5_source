@@ -50,12 +50,12 @@ namespace PacketParser.FileTransfer {
             
             if (base.TryActivate()) {
                 //write Au header : https://en.wikipedia.org/wiki/Au_file_format
-                base.AddData(Utils.ByteConverter.ToByteArray((uint)0x2e736e64, false), wc++);//0x2e736e64 = .snd
-                base.AddData(Utils.ByteConverter.ToByteArray((uint)24, false), wc++);//data offset. The minimum valid number is 24 (decimal)
-                base.AddData(Utils.ByteConverter.ToByteArray((uint)0xffffffff, false), wc++);//data size in bytes. If unknown, the value 0xffffffff should be used.
-                base.AddData(Utils.ByteConverter.ToByteArray((uint)this.AuEncoding, false), wc++);//Data encoding format: 
-                base.AddData(Utils.ByteConverter.ToByteArray(this.sampleRate, false), wc++);//sample rate
-                base.AddData(Utils.ByteConverter.ToByteArray((uint)1, false), wc++);//channels
+                AddData(Utils.ByteConverter.ToByteArray((uint)0x2e736e64, false), wc++);//0x2e736e64 = .snd
+                AddData(Utils.ByteConverter.ToByteArray((uint)24, false), wc++);//data offset. The minimum valid number is 24 (decimal)
+                AddData(Utils.ByteConverter.ToByteArray((uint)0xffffffff, false), wc++);//data size in bytes. If unknown, the value 0xffffffff should be used.
+                AddData(Utils.ByteConverter.ToByteArray((uint)this.AuEncoding, false), wc++);//Data encoding format: 
+                AddData(Utils.ByteConverter.ToByteArray(this.sampleRate, false), wc++);//sample rate
+                AddData(Utils.ByteConverter.ToByteArray((uint)1, false), wc++);//channels
 
                 return true;
             }

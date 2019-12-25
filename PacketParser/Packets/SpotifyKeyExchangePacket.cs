@@ -119,13 +119,13 @@ namespace PacketParser.Packets {
                         this.PacketEndIndex=packetStartIndex+this.keyExchangePacketLength-1;
                     this.clientOS=parentFrame.Data[packetStartIndex+4];
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client OS", this.ClientOperatingSystem);
+                        Attributes.Add("Client OS", this.ClientOperatingSystem);
                     this.clientID = Utils.ByteConverter.ToUInt32(parentFrame.Data, packetStartIndex + 5);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client ID", "0x"+this.clientID.ToString("X2"));
+                        Attributes.Add("Client ID", "0x"+this.clientID.ToString("X2"));
                     this.clientRevision = Utils.ByteConverter.ToUInt32(parentFrame.Data, packetStartIndex + 9);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client Revision", this.clientRevision.ToString());
+                        Attributes.Add("Client Revision", this.clientRevision.ToString());
                     Array.Copy(parentFrame.Data, packetStartIndex+13, random, 0, 16);
                     Array.Copy(parentFrame.Data, packetStartIndex+29, publicKey, 0, 96);
                     this.blob=new byte[128];
@@ -133,7 +133,7 @@ namespace PacketParser.Packets {
                     byte usernameLength=parentFrame.Data[packetStartIndex+253];
                     this.username = Utils.ByteConverter.ReadString(parentFrame.Data, packetStartIndex + 254, usernameLength);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client Username", this.username);
+                        Attributes.Add("Client Username", this.username);
                     if (Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 254 + usernameLength) != CONTENT_END_USHORT)
                         throw new Exception("Not a valid SpotifyKeyExchangePacket");
                 }
@@ -146,13 +146,13 @@ namespace PacketParser.Packets {
                     //client_revision
                     this.clientRevision = Utils.ByteConverter.ToUInt32(parentFrame.Data, packetStartIndex + 12);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client Revision", this.clientRevision.ToString());
+                        Attributes.Add("Client Revision", this.clientRevision.ToString());
                     //4 bytes unknown
                     //4 bytes 0x01000000
                     //client_id
                     this.clientID = Utils.ByteConverter.ToUInt32(parentFrame.Data, packetStartIndex + 24);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client ID", "0x"+this.clientID.ToString("X2"));
+                        Attributes.Add("Client ID", "0x"+this.clientID.ToString("X2"));
                     //4 bytes unknown
                     //16 bytes client_random_16
                     //96 bytes my_pub_key
@@ -168,7 +168,7 @@ namespace PacketParser.Packets {
                     //username
                     this.username = Utils.ByteConverter.ReadString(parentFrame.Data, packetStartIndex + 276 + randomDataLength, usernameLength);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client Username", this.username);
+                        Attributes.Add("Client Username", this.username);
                     //skip the last byte (unknown)
                 }
             }
@@ -188,7 +188,7 @@ namespace PacketParser.Packets {
                     byte usernameLength=parentFrame.Data[PacketStartIndex+17];
                     this.username = Utils.ByteConverter.ReadString(parentFrame.Data, packetStartIndex + 18, usernameLength);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client Username", this.username);
+                        Attributes.Add("Client Username", this.username);
                     Array.Copy(parentFrame.Data, packetStartIndex+18+usernameLength, publicKey, 0, 96);
                     //skip 256 bytes of random data
                     this.salt=new byte[10];
@@ -213,7 +213,7 @@ namespace PacketParser.Packets {
                     //Y bytes username (pos = 0x184+c0 = 0x244)
                     this.username = Utils.ByteConverter.ReadString(parentFrame.Data, packetStartIndex + 0x184 + paddingLength, usernameLength);
                     if (!this.ParentFrame.QuickParse)
-                        base.Attributes.Add("Client Username", this.username);
+                        Attributes.Add("Client Username", this.username);
                     //? challenges (pos = 0x244+8 = 24c)
                 }
 
@@ -232,7 +232,7 @@ namespace PacketParser.Packets {
             get { return true; }//this is a one-frame-per-message protocol
         }
 
-        public int ParsedBytesCount { get { return base.PacketLength; } }
+        public int ParsedBytesCount { get { return PacketLength; } }
 
         #endregion
     }

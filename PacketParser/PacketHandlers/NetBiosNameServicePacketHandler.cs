@@ -56,8 +56,8 @@ namespace PacketParser.PacketHandlers {
                 System.Net.IPAddress answeredIpAddress = new System.Net.IPAddress(ipBytes);
 
                 parameters.Add(answer.Name, answeredIpAddress.ToString());
-                if (base.MainPacketHandler.NetworkHostList.ContainsIP(answeredIpAddress))
-                    base.MainPacketHandler.NetworkHostList.GetNetworkHost(answeredIpAddress).AddHostName(answer.NameTrimmed);
+                if (MainPacketHandler.NetworkHostList.ContainsIP(answeredIpAddress))
+                    MainPacketHandler.NetworkHostList.GetNetworkHost(answeredIpAddress).AddHostName(answer.NameTrimmed);
             }
             foreach (Packets.NetBiosNameServicePacket.ResourceRecord additional in netBiosNameServicePacket.AdditionalResourceRecords) {
                 UInt16 flags = Utils.ByteConverter.ToUInt16(additional.Data.Array, additional.Data.Offset);
@@ -69,21 +69,21 @@ namespace PacketParser.PacketHandlers {
                     System.Net.IPAddress answeredIpAddress = new System.Net.IPAddress(ipBytes);
 
                     parameters.Add(additional.Name, answeredIpAddress.ToString());
-                    if (base.MainPacketHandler.NetworkHostList.ContainsIP(answeredIpAddress))
-                        base.MainPacketHandler.NetworkHostList.GetNetworkHost(answeredIpAddress).AddHostName(additional.NameTrimmed);
+                    if (MainPacketHandler.NetworkHostList.ContainsIP(answeredIpAddress))
+                        MainPacketHandler.NetworkHostList.GetNetworkHost(answeredIpAddress).AddHostName(additional.NameTrimmed);
                 }
 
                 
             }
             if (parameters.Count > 0 && transportLayerPacket != null) {
                 if(netBiosNameServicePacket.Flags.Response)
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(netBiosNameServicePacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, netBiosNameServicePacket.ParentFrame.Timestamp, "NBNS Response"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(netBiosNameServicePacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, netBiosNameServicePacket.ParentFrame.Timestamp, "NBNS Response"));
                 else if(netBiosNameServicePacket.Flags.OperationCode == (byte)Packets.NetBiosNameServicePacket.HeaderFlags.OperationCodes.registration)
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(netBiosNameServicePacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, netBiosNameServicePacket.ParentFrame.Timestamp, "NBNS Registration"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(netBiosNameServicePacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, netBiosNameServicePacket.ParentFrame.Timestamp, "NBNS Registration"));
                 else if(netBiosNameServicePacket.Flags.OperationCode == (byte)Packets.NetBiosNameServicePacket.HeaderFlags.OperationCodes.query)
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(netBiosNameServicePacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, netBiosNameServicePacket.ParentFrame.Timestamp, "NBNS Query"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(netBiosNameServicePacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, netBiosNameServicePacket.ParentFrame.Timestamp, "NBNS Query"));
                 else
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(netBiosNameServicePacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, netBiosNameServicePacket.ParentFrame.Timestamp, "NBNS Message"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(netBiosNameServicePacket.ParentFrame.FrameNumber, sourceHost, destinationHost, transportLayerPacket.TransportProtocol, transportLayerPacket.SourcePort, transportLayerPacket.DestinationPort, parameters, netBiosNameServicePacket.ParentFrame.Timestamp, "NBNS Message"));
             }
         }
 

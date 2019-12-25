@@ -162,7 +162,7 @@ namespace PacketParser.Packets {
         public ushort MultiplexId { get { return this.multiplexId; } }
         public ushort ProcessId { get { return this.processId; } }
         public ushort UserId { get { return this.userId; } }
-        public int SmbHeaderStartIndex { get { return base.PacketStartIndex; } }
+        public int SmbHeaderStartIndex { get { return PacketStartIndex; } }
         public byte NextCommand { get { return this.firstCommand; } }
 
         private static readonly HashSet<byte> AndXCommandSet = new HashSet<byte> {
@@ -455,7 +455,7 @@ namespace PacketParser.Packets {
 
             //Frame ParentFrame { get { return parentSmbCommand.ParentFrame; } }
             public int IndexOfNextPipelinedCommand { get { return this.SmbHeaderStartIndex + this.nextCommandOffset + 1; } }//index of the next chained/pipelined command (if AndX)
-            public int SmbHeaderStartIndex { get { return base.ParentCifsPacket.SmbHeaderStartIndex; } }
+            public int SmbHeaderStartIndex { get { return ParentCifsPacket.SmbHeaderStartIndex; } }
             public byte WordCount { get { return this.wordCount; } }
             public bool Flags2UnicodeStrings { get { return this.ParentCifsPacket.Flags2UnicodeStrings; } }
             public bool FlagsResponse { get { return this.ParentCifsPacket.FlagsResponse; } }
@@ -464,7 +464,7 @@ namespace PacketParser.Packets {
             public ushort ProcessId { get { return this.ParentCifsPacket.ProcessId; } }
             public ushort UserId { get { return this.ParentCifsPacket.UserId; } }
             public ushort BufferByteCount { get { return this.byteCount; } }
-            public int BufferStartIndex { get { return base.PacketStartIndex + this.wordCount * 2 + 2; } }
+            public int BufferStartIndex { get { return PacketStartIndex + this.wordCount * 2 + 2; } }
             public byte NextCommand { get { return this.nextCommand; } }
 
             //public int BufferStartIndex { get { return base.PacketStartIndex + this.wordCount * 2 + 3; } }
@@ -482,7 +482,7 @@ namespace PacketParser.Packets {
                 this.wordCount = parentCifsPacket.ParentFrame.Data[parentCifsPacket.IndexOfNextPipelinedCommand - 1];//not very pretty, but this is where the WordCount is for this command
 
                 //this.nextCommand = parentCifsPacket.ParentFrame.Data[parentCifsPacket.IndexOfNextPipelinedCommand];
-                this.nextCommand = base.ParentFrame.Data[this.PacketStartIndex];
+                this.nextCommand = ParentFrame.Data[this.PacketStartIndex];
                 this.nextCommandOffset = Utils.ByteConverter.ToUInt16(ParentFrame.Data, this.PacketStartIndex + 2, true);
 
                 this.byteCount = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + this.wordCount * 2, true);
@@ -579,10 +579,10 @@ namespace PacketParser.Packets {
             internal TreeConnectAndXRequest(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "CIFS Tree Connect AndX Request") {
                 //ushort passwordLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, parentCifsPacket.indexOfNextPipelinedCommand + 6, true);
-                ushort passwordLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 6, true);
+                ushort passwordLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 6, true);
                 int shareNameIndex = this.PacketStartIndex + 10 + passwordLength;//same thing as base.BufferStartIndex + passwordLength
-                System.Diagnostics.Debug.Assert(shareNameIndex == base.BufferStartIndex + passwordLength);
-                if (parentCifsPacket.Flags2UnicodeStrings && ((shareNameIndex - base.SmbHeaderStartIndex) % 2 == 1))
+                System.Diagnostics.Debug.Assert(shareNameIndex == BufferStartIndex + passwordLength);
+                if (parentCifsPacket.Flags2UnicodeStrings && ((shareNameIndex - SmbHeaderStartIndex) % 2 == 1))
                     shareNameIndex++;//padding to align on an even word boundary
 
                 this.shareName = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref shareNameIndex, parentCifsPacket.Flags2UnicodeStrings, true);
@@ -607,16 +607,16 @@ namespace PacketParser.Packets {
                 : base(parentCifsPacket, "CIFS NT Create AndX Request") {
 
 
-                if(base.WordCount==24) {
+                if(WordCount == 24) {
                     //int nameLength=ParentFrame.Data[parentCifsPacket.IndexOfNextPipelinedCommand+5];
                     int nameLength = ParentFrame.Data[this.PacketStartIndex + 5];
-                    int fileNameIndex = base.BufferStartIndex;//this value must be adjusted to a 16-bit word boundary -- it is probably not aligned at the moment
+                    int fileNameIndex = BufferStartIndex;//this value must be adjusted to a 16-bit word boundary -- it is probably not aligned at the moment
                     //int fileNameIndex = base.PacketStartIndex + base.WordCount * 2 + 2;//this value must be adjusted to a 16-bit word boundary -- it is probably not aligned at the moment
-                    ushort fileNameLength = base.BufferByteCount;//This field MUST be the total length of the Name field, plus any padding added for alignment.
+                    ushort fileNameLength = BufferByteCount;//This field MUST be the total length of the Name field, plus any padding added for alignment.
 
                     //https://msdn.microsoft.com/en-us/library/ee442175.aspx
                     // If the FileName string consists of Unicode characters, this field MUST be aligned to start on a 2-byte boundary from the start of the SMB Header.
-                    if (base.Flags2UnicodeStrings && ((fileNameIndex - base.SmbHeaderStartIndex) % 2 == 1)) {
+                    if (Flags2UnicodeStrings && ((fileNameIndex - SmbHeaderStartIndex) % 2 == 1)) {
                         fileNameIndex++;
                         fileNameLength--;
                     }
@@ -629,7 +629,7 @@ namespace PacketParser.Packets {
                         this.Attributes.Add("Filename", this.filename);
                 }
                 else
-                    throw new Exception("Word Cound is not 24 ("+base.WordCount.ToString()+")");
+                    throw new Exception("Word Cound is not 24 ("+ WordCount.ToString()+")");
             }
         }
         internal class NTCreateAndXResponse : AbstractSmbCommand {
@@ -645,11 +645,11 @@ namespace PacketParser.Packets {
             internal NTCreateAndXResponse(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "NT Create AndX Response") {
                 //this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, parentCifsPacket.indexOfNextPipelinedCommand + 5, true);
-                this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 5, true);
+                this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 5, true);
                 if (!this.ParentFrame.QuickParse)
-                    base.Attributes.Add("File ID", "0x"+fileId.ToString("X2"));
+                    Attributes.Add("File ID", "0x"+fileId.ToString("X2"));
                 //this.endOfFile = Utils.ByteConverter.ToUInt64(ParentFrame.Data, parentCifsPacket.indexOfNextPipelinedCommand + 55, true);
-                this.endOfFile = Utils.ByteConverter.ToUInt64(ParentFrame.Data, base.PacketStartIndex + 55, true);
+                this.endOfFile = Utils.ByteConverter.ToUInt64(ParentFrame.Data, PacketStartIndex + 55, true);
             }
         }
         internal class WriteAndXRequest : AbstractSmbCommand {
@@ -667,17 +667,17 @@ namespace PacketParser.Packets {
             internal WriteAndXRequest(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "CIFS Write AndX Request") {
 
-                this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 4, true);
-                this.writeOffset = (long)Utils.ByteConverter.ToUInt32(ParentFrame.Data, base.PacketStartIndex + 6, 4, true);
-                ushort dataLengthHigh = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 18, true);
-                ushort dataLengthLow = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 20, true);
+                this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 4, true);
+                this.writeOffset = (long)Utils.ByteConverter.ToUInt32(ParentFrame.Data, PacketStartIndex + 6, 4, true);
+                ushort dataLengthHigh = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 18, true);
+                ushort dataLengthLow = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 20, true);
                 this.dataLength = dataLengthHigh;
                 this.dataLength <<= 16;
                 this.dataLength += dataLengthLow;
-                this.dataOffset = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 22, true);
+                this.dataOffset = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 22, true);
 
                 if (!this.ParentFrame.QuickParse)
-                    base.Attributes.Add("File ID", "0x" + fileId.ToString("X2"));
+                    Attributes.Add("File ID", "0x" + fileId.ToString("X2"));
             }
 
             internal byte[] GetFileData() {
@@ -700,10 +700,10 @@ namespace PacketParser.Packets {
             internal ReadAndXRequest(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "CIFS Read AndX Request") {
 
-                this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 4, true);
+                this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 4, true);
 
                 if (!this.ParentFrame.QuickParse)
-                    base.Attributes.Add("File ID", "0x"+fileId.ToString("X2"));
+                    Attributes.Add("File ID", "0x"+fileId.ToString("X2"));
             }
         }
         internal class ReadAndXResponse : BasicSmbAndXCommand {
@@ -716,8 +716,8 @@ namespace PacketParser.Packets {
             internal ReadAndXResponse(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "CIFS Read AndX Response") {
 
-                    this.dataLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 10, true);
-                    this.dataOffset = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 12, true);
+                    this.dataLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 10, true);
+                    this.dataOffset = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 12, true);
             }
 
             internal byte[] GetFileData() {
@@ -737,9 +737,9 @@ namespace PacketParser.Packets {
 
             internal CloseRequest(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "Close Request") {
-                this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex, true);
+                this.fileId = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex, true);
                 if (!this.ParentFrame.QuickParse)
-                    base.Attributes.Add("File ID", "0x"+fileId.ToString("X2"));
+                    Attributes.Add("File ID", "0x"+fileId.ToString("X2"));
             }
         }
 
@@ -774,60 +774,60 @@ namespace PacketParser.Packets {
 
                 //OK, a big problem here is that I don't at this level know which protocol has been negotiated for the SMB session...
                 //A good way to solve that problem is to look at the WordCount (number of parameters)
-                if(base.WordCount==10){//If wordCount is 10 then the dialect is prior to "NT LM 0.12"
-                    ushort passwordLength = Utils.ByteConverter.ToUInt16(base.ParentFrame.Data, base.PacketStartIndex + 14, true);
-                    int packetIndex = base.PacketStartIndex + 22;
-                    this.accountPassword = Utils.ByteConverter.ReadString(base.ParentFrame.Data, ref packetIndex, passwordLength, false, true);
-                    this.accountName = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                if(WordCount == 10){//If wordCount is 10 then the dialect is prior to "NT LM 0.12"
+                    ushort passwordLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 14, true);
+                    int packetIndex = PacketStartIndex + 22;
+                    this.accountPassword = Utils.ByteConverter.ReadString(ParentFrame.Data, ref packetIndex, passwordLength, false, true);
+                    this.accountName = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
                     //I currently don't care about the primary domain...
-                    this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                    this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                    this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
                 }
-                else if(base.WordCount==12) {//If wordCount is 12 then the dialect is "NT LM 0.12" or later
-                    base.SecurityBlobLength = Utils.ByteConverter.ToUInt16(base.ParentFrame.Data, base.PacketStartIndex + 14, true);
-                    int packetIndex = base.PacketStartIndex + 26+base.SecurityBlobLength;
+                else if(WordCount == 12) {//If wordCount is 12 then the dialect is "NT LM 0.12" or later
+                    SecurityBlobLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 14, true);
+                    int packetIndex = PacketStartIndex + 26+ SecurityBlobLength;
                     if(parentCifsPacket.Flags2UnicodeStrings && ((packetIndex-parentCifsPacket.SmbHeaderStartIndex)%2==1))
                         packetIndex++;//must start on a word boundrary (2 bytes)
-                    this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                    this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
                 }
-                else if(base.WordCount==13) {//smb.wct == 13
+                else if(WordCount == 13) {//smb.wct == 13
                     //ushort ansiPasswordLength = Utils.ByteConverter.ToUInt16(parentCifsPacket.ParentFrame.Data, base.IndexOfNextPipelinedCommand + 14, true);
                     //ushort unicodePasswordLength = Utils.ByteConverter.ToUInt16(parentCifsPacket.ParentFrame.Data, base.IndexOfNextPipelinedCommand + 16, true);
-                    ushort ansiPasswordLength = Utils.ByteConverter.ToUInt16(base.ParentFrame.Data, base.PacketStartIndex + 14, true);
-                    ushort unicodePasswordLength = Utils.ByteConverter.ToUInt16(base.ParentFrame.Data, base.PacketStartIndex + 16, true);
+                    ushort ansiPasswordLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 14, true);
+                    ushort unicodePasswordLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 16, true);
                     if (ansiPasswordLength>0) {
                         //this.accountPassword=ByteConverter.ReadString(parentCifsPacket.ParentFrame.Data, parentCifsPacket.parametersStartIndex+28, ansiPasswordLength);
-                        this.accountPassword = Utils.ByteConverter.ReadHexString(base.ParentFrame.Data, ansiPasswordLength, base.PacketStartIndex + 28);
+                        this.accountPassword = Utils.ByteConverter.ReadHexString(ParentFrame.Data, ansiPasswordLength, PacketStartIndex + 28);
                     }
                     if(unicodePasswordLength>0) {
-                        string decodedPassword = accountPassword = Utils.ByteConverter.ReadString(base.ParentFrame.Data, base.PacketStartIndex + 28 + ansiPasswordLength, unicodePasswordLength, true, false);
-                        string hexPassword = accountPassword = Utils.ByteConverter.ReadHexString(base.ParentFrame.Data, unicodePasswordLength, base.PacketStartIndex + 28 + ansiPasswordLength);
+                        string decodedPassword = accountPassword = Utils.ByteConverter.ReadString(ParentFrame.Data, PacketStartIndex + 28 + ansiPasswordLength, unicodePasswordLength, true, false);
+                        string hexPassword = accountPassword = Utils.ByteConverter.ReadHexString(ParentFrame.Data, unicodePasswordLength, PacketStartIndex + 28 + ansiPasswordLength);
                         //this.accountPassword=decodedPassword+" (HEX: "+hexPassword+")";
                         this.accountPassword=hexPassword;
                     }
-                    int packetIndex = base.PacketStartIndex + 28+ansiPasswordLength+unicodePasswordLength;
+                    int packetIndex = PacketStartIndex + 28+ansiPasswordLength+unicodePasswordLength;
                     //I think we need an even word boundary (stupid SMB spec!)
                     if(parentCifsPacket.Flags2UnicodeStrings && ((packetIndex-parentCifsPacket.SmbHeaderStartIndex)%2==1))
                         packetIndex++;
                     if(unicodePasswordLength>0) {
-                        this.accountName = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                        this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                        this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                        this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                        this.accountName = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                        this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                        this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                        this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
                     }
                     else {
-                        this.accountName = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, false, true);
+                        this.accountName = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, false, true);
 
-                        this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, false, true);
-                        this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, false, true);
-                        this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, false, true);
+                        this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, false, true);
+                        this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, false, true);
+                        this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, false, true);
                     }
                 }
 
-                if(base.SecurityBlobLength>0)
-                    base.SecurityBlobIndex = base.PacketStartIndex + 2+base.WordCount*2;
+                if(SecurityBlobLength > 0)
+                    SecurityBlobIndex = PacketStartIndex + 2+ WordCount * 2;
 
                 if (!this.ParentFrame.QuickParse) {
                     if (accountName != null && accountName.Length > 0)
@@ -866,29 +866,29 @@ namespace PacketParser.Packets {
 
                 //OK, a big problem here is that I don't at this level know which protocol has been negotiated for the SMB session...
                 //A good way to solve that problem is to look at the WordCount (number of parameters)
-                if(base.WordCount==3) {//If wordCount is 3 then the dialect is prior to "NT LM 0.12"
+                if(WordCount == 3) {//If wordCount is 3 then the dialect is prior to "NT LM 0.12"
                     //int packetIndex= base.PacketStartIndex + 9;
-                    int packetIndex = base.PacketStartIndex + 8;//StartIndex is AFTER word_count in this implementation!
-                    if (parentCifsPacket.Flags2UnicodeStrings && ((packetIndex - base.SmbHeaderStartIndex) % 2 == 1))
+                    int packetIndex = PacketStartIndex + 8;//StartIndex is AFTER word_count in this implementation!
+                    if (parentCifsPacket.Flags2UnicodeStrings && ((packetIndex - SmbHeaderStartIndex) % 2 == 1))
                         packetIndex++;//must start on a word boundrary (2 bytes)
-                    this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                    this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                    this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
                 }
-                else if(base.WordCount==4) {//If wordCount is 4 then the dialect is "NT LM 0.12" or later
-                    base.SecurityBlobLength = Utils.ByteConverter.ToUInt16(base.ParentFrame.Data, base.PacketStartIndex + 6, true);
+                else if(WordCount == 4) {//If wordCount is 4 then the dialect is "NT LM 0.12" or later
+                    SecurityBlobLength = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 6, true);
 
-                    int packetIndex= base.PacketStartIndex + 10+base.SecurityBlobLength;
+                    int packetIndex= PacketStartIndex + 10+ SecurityBlobLength;
                     //if(parentCifsPacket.Flags2UnicodeStrings && ((packetIndex-parentCifsPacket.PacketStartIndex)%2==1))
-                    if (parentCifsPacket.Flags2UnicodeStrings && ((packetIndex - base.SmbHeaderStartIndex) % 2 == 1))
+                    if (parentCifsPacket.Flags2UnicodeStrings && ((packetIndex - SmbHeaderStartIndex) % 2 == 1))
                         packetIndex++;//must start on a word boundrary (2 bytes)
-                    this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                    this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
-                    this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.nativeOs = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.nativeLanManager = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
+                    this.primaryDomain = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref packetIndex, parentCifsPacket.Flags2UnicodeStrings, true);
                 }
 
-                if(base.SecurityBlobLength>0)
-                    base.SecurityBlobIndex= base.PacketStartIndex + 2+parentCifsPacket.WordCount*2;
+                if(SecurityBlobLength > 0)
+                    SecurityBlobIndex = PacketStartIndex + 2+parentCifsPacket.WordCount*2;
             }
         }
 
@@ -903,9 +903,9 @@ namespace PacketParser.Packets {
 
             internal OpenAndXRequest(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "CIFS Open AndX Request") {
-                ushort length = Utils.ByteConverter.ToUInt16(ParentFrame.Data, base.PacketStartIndex + 30, true);
-                int index = base.PacketStartIndex + 32;
-                this.FileName = Utils.ByteConverter.ReadNullTerminatedString(base.ParentFrame.Data, ref index, parentCifsPacket.Flags2UnicodeStrings, true, length);
+                ushort length = Utils.ByteConverter.ToUInt16(ParentFrame.Data, PacketStartIndex + 30, true);
+                int index = PacketStartIndex + 32;
+                this.FileName = Utils.ByteConverter.ReadNullTerminatedString(ParentFrame.Data, ref index, parentCifsPacket.Flags2UnicodeStrings, true, length);
                 //this.FileName = Utils.ByteConverter.ReadLengthValueString(base.ParentFrame.Data, ref index, length);
             }
         }
@@ -917,7 +917,7 @@ namespace PacketParser.Packets {
 
             internal byte WordCount { get; }
             internal ushort ByteCount { get; }
-            internal int BufferStartIndex { get { return base.PacketStartIndex + this.WordCount * 2 + 2; } }
+            internal int BufferStartIndex { get { return PacketStartIndex + this.WordCount * 2 + 2; } }
             internal string TransactionName { get; }
             internal ushort ParameterCount { get; }
             internal ushort ParameterOffset { get; }
@@ -954,12 +954,12 @@ namespace PacketParser.Packets {
 
                 //https://msdn.microsoft.com/en-us/library/ee442175.aspx
                 // If the TransactionName string consists of Unicode characters, this field MUST be aligned to start on a 2-byte boundary from the start of the SMB Header.
-                if (base.ParentCifsPacket.Flags2UnicodeStrings && ((index - base.ParentCifsPacket.SmbHeaderStartIndex) % 2 == 1)) {
+                if (ParentCifsPacket.Flags2UnicodeStrings && ((index - ParentCifsPacket.SmbHeaderStartIndex) % 2 == 1)) {
                     index++;
                     transactionaNameLength--;
                 }
 
-                this.TransactionName = Utils.ByteConverter.ReadString(ParentFrame.Data, ref index, transactionaNameLength, base.ParentCifsPacket.Flags2UnicodeStrings, true, true);
+                this.TransactionName = Utils.ByteConverter.ReadString(ParentFrame.Data, ref index, transactionaNameLength, ParentCifsPacket.Flags2UnicodeStrings, true, true);
                 while (index < ParentFrame.Data.Length && ParentFrame.Data[index] == 0)
                     index++;
                 this.InnerPacketIndex = index;
@@ -988,7 +988,7 @@ namespace PacketParser.Packets {
             internal NegotiateProtocolRequest(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "CIFS Negotiate Protocol Request") {
                 this.dialectList=new List<string>();
-                ushort byteCount = Utils.ByteConverter.ToUInt16(parentCifsPacket.ParentFrame.Data, base.PacketStartIndex, true);
+                ushort byteCount = Utils.ByteConverter.ToUInt16(parentCifsPacket.ParentFrame.Data, PacketStartIndex, true);
 
 
                 //int packetIndex=parentCifsPacket.IndexOfNextPipelinedCommand+2;//It now points to the first BufferFormat in Dialects[]
@@ -1009,7 +1009,7 @@ namespace PacketParser.Packets {
 
             internal NegotiateProtocolResponse(ISmbCommandParent parentCifsPacket)
                 : base(parentCifsPacket, "CIFS Negotiate Protocol Response") {
-                    this.dialectIndex = Utils.ByteConverter.ToUInt16(parentCifsPacket.ParentFrame.Data, base.PacketStartIndex, true);
+                    this.dialectIndex = Utils.ByteConverter.ToUInt16(parentCifsPacket.ParentFrame.Data, PacketStartIndex, true);
             }
 
         }
@@ -1115,7 +1115,7 @@ namespace PacketParser.Packets {
                     if((sequenceElementIdentifier&0xf0)==0xa0) {//SPNEGO sequence element
                         int sequenceElementNumber=sequenceElementIdentifier&0x0f;
                         if (!this.ParentFrame.QuickParse)
-                            base.Attributes.Add("SPNEGO Element "+sequenceElementNumber+" length", sequenceElementLength.ToString());
+                            Attributes.Add("SPNEGO Element "+sequenceElementNumber+" length", sequenceElementLength.ToString());
                         byte[] kerberosV5OID = Utils.ByteConverter.ToByteArrayFromHexString("0x2a864886f712010202");//Kerberos V5 OID { 1 2 840 113554 1 2 2} https://tools.ietf.org/html/rfc4178
 
                         int kerberosOIDIndex = packetIndex;

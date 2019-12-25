@@ -58,7 +58,7 @@ namespace PacketParser.Packets {
                 this.valueLength=parentFrame.Data[PacketStartIndex+1];
                 //this.PacketEndIndex=PacketStartIndex+2+length;
                 //int index=;
-                this.valueBytes=new byte[Math.Min(valueLength, base.PacketLength-2)];
+                this.valueBytes=new byte[Math.Min(valueLength, PacketLength - 2)];
                 Array.Copy(parentFrame.Data, PacketStartIndex+2, this.valueBytes, 0, this.valueBytes.Length);
                 if (!this.ParentFrame.QuickParse)
                     this.Attributes.Add("Field 0x"+typeByte.ToString("X2"), ValueString);

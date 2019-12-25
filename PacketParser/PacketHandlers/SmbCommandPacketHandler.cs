@@ -63,7 +63,7 @@ namespace PacketParser.PacketHandlers {
             //there can be multiple SMB2 commands in the same NetBiosSessionServicePacket
             foreach (Packets.AbstractPacket p in packets) {
                 if (p.GetType().IsSubclassOf(typeof(Packets.SmbPacket.AbstractSmbCommand)))
-                    ExtractSmbData(tcpSession, transferIsClientToServer, tcpPacket, (Packets.SmbPacket.AbstractSmbCommand)p, base.MainPacketHandler);
+                    ExtractSmbData(tcpSession, transferIsClientToServer, tcpPacket, (Packets.SmbPacket.AbstractSmbCommand)p, MainPacketHandler);
 
             }
             return 0;//NetBiosSessionServicePacketHandler will return the # parsed bytes anyway.
@@ -158,7 +158,7 @@ namespace PacketParser.PacketHandlers {
                     parameters.Add("SMB Account Name", request.AccountName);
                 }
                 if (parameters.Count > 0)
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(request.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, request.ParentFrame.Timestamp, "SMB SetupAndXRequest"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(request.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, request.ParentFrame.Timestamp, "SMB SetupAndXRequest"));
             }
             else if (smbCommandPacket.GetType() == typeof(Packets.SmbPacket.SetupAndXResponse)) {
                 
@@ -174,7 +174,7 @@ namespace PacketParser.PacketHandlers {
                     parameters.Add("SMB Native OS", response.NativeOs);
                 }
                 if(parameters.Count > 0)
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(response.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, response.ParentFrame.Timestamp, "SMB SetupAndXResponse"));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(response.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, response.ParentFrame.Timestamp, "SMB SetupAndXResponse"));
             }
             else if (smbCommandPacket.GetType() == typeof(Packets.SmbPacket.NTCreateAndXRequest)) {
                 Packets.SmbPacket.NTCreateAndXRequest request = (Packets.SmbPacket.NTCreateAndXRequest)smbCommandPacket;
@@ -188,7 +188,7 @@ namespace PacketParser.PacketHandlers {
                 //print raw filename on parameters tab
                 System.Collections.Specialized.NameValueCollection parameters = new System.Collections.Specialized.NameValueCollection();
                 parameters.Add("SMB NT Create AndX Request " + request.ParentCifsPacket.MultiplexId.ToString(), filename);
-                base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(request.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, request.ParentFrame.Timestamp, "SMB NTCreateAndXRequest"));
+                MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(request.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, parameters, request.ParentFrame.Timestamp, "SMB NTCreateAndXRequest"));
 
                 SmbSession smbSession;
                 if (this.smbSessionPopularityList.ContainsKey(smbSessionId)) {
@@ -332,7 +332,7 @@ namespace PacketParser.PacketHandlers {
                     //move the assembler to the real FileStreamAssemblerList!
                     FileTransfer.FileStreamAssembler assembler = smbSession.GetLastReferencedFileStreamAssembler(response.ParentCifsPacket.TreeId, response.ParentCifsPacket.MultiplexId, response.ParentCifsPacket.ProcessId);
                     if (assembler == null) {
-                        base.MainPacketHandler.OnAnomalyDetected("Unable to find assembler for frame " + smbCommandPacket.ParentFrame.FrameNumber + " : " + smbCommandPacket.ToString());
+                        MainPacketHandler.OnAnomalyDetected("Unable to find assembler for frame " + smbCommandPacket.ParentFrame.FrameNumber + " : " + smbCommandPacket.ToString());
                     }
                     else if (assembler != null) {
                         /* Removed 2011-04-25

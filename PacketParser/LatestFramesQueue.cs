@@ -20,8 +20,8 @@ namespace PacketParser {
 
         new public void Enqueue(Frame frame) {
             base.Enqueue(frame);
-            if(base.Count>maxSize)
-                base.Dequeue();
+            if(Count > maxSize)
+                Dequeue();
         }
 
        

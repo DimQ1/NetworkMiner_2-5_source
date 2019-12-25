@@ -42,7 +42,7 @@ namespace PacketParser.PacketHandlers {
                     sqlParams.Add("SQL Query "+sqlParams.Count+1, s);
                 }
                 if (sqlParams.Count > 0) {
-                    base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(tdsPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, sqlParams, tdsPacket.ParentFrame.Timestamp, ""));
+                    MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(tdsPacket.ParentFrame.FrameNumber, tcpSession.Flow.FiveTuple, transferIsClientToServer, sqlParams, tdsPacket.ParentFrame.Timestamp, ""));
                 }
             }
             if(tdsPacket.PacketType==(byte)Packets.TabularDataStreamPacket.PacketTypes.Tds7Login) {
@@ -66,7 +66,7 @@ namespace PacketParser.PacketHandlers {
                     tcpSession.ServerHost.AddNumberedExtraDetail("SQL Database Name", tdsPacket.DatabaseName);
 
                 if(nc!=null)
-                    base.MainPacketHandler.AddCredential(nc);
+                    MainPacketHandler.AddCredential(nc);
             }
 
             return tdsPacket.PacketLength;

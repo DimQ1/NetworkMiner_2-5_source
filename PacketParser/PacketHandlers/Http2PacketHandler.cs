@@ -309,9 +309,9 @@ namespace PacketParser.PacketHandlers
                 data = data.Skip((int)length);
 
                 if (huffman)
-                    return System.Text.Encoding.UTF8.GetString(this.huffmanDecoder.Decode(bytes));
+                    return Encoding.UTF8.GetString(this.huffmanDecoder.Decode(bytes));
                 else
-                    return System.Text.Encoding.UTF8.GetString(bytes);
+                    return Encoding.UTF8.GetString(bytes);
             }
 
         }//End of HPACK class
@@ -350,7 +350,7 @@ namespace PacketParser.PacketHandlers
 
             if (http2Packet != null && tcpPacket != null) {
                 if (http2Packet.PacketHeaderIsComplete) {
-                    successfulExtraction = this.ExtractHttpData(http2Packet, tcpPacket, tcpSession, transferIsClientToServer, base.MainPacketHandler);
+                    successfulExtraction = this.ExtractHttpData(http2Packet, tcpPacket, tcpSession, transferIsClientToServer, MainPacketHandler);
                 }
 
             }
@@ -487,7 +487,7 @@ namespace PacketParser.PacketHandlers
                         headers.Add(headerTuple.Item1, headerTuple.Item2);
                 }
                 */
-                base.MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(http2Packet.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, headers, http2Packet.ParentFrame.Timestamp, "HTTP/2 Header"));
+                MainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(http2Packet.ParentFrame.FrameNumber, fiveTuple, transferIsClientToServer, headers, http2Packet.ParentFrame.Timestamp, "HTTP/2 Header"));
 
                 
                 if (headerDict.ContainsKey(HPACK.HEADER_NAME_PATH)) {
@@ -531,7 +531,7 @@ namespace PacketParser.PacketHandlers
                         lock (this.fileSegmentAssemblerList) {
                             if (this.fileSegmentAssemblerList.ContainsKey(requestedFileId))
                                 this.fileSegmentAssemblerList[requestedFileId].AssembleAndClose();
-                            FileTransfer.FileSegmentAssembler fileSegmentAssembler = new FileTransfer.FileSegmentAssembler(outputDir, !transferIsClientToServer, fileLocation + "/" + filename, requestedFileId, base.MainPacketHandler.FileStreamAssemblerList, this.fileSegmentAssemblerList, FileTransfer.FileStreamTypes.HTTP2, "HTTP/2 stream " + http2Packet.StreamIdentifier + " " + headerDict[HPACK.HEADER_NAME_METHOD] + " " + path, fiveTuple, authority);
+                            FileTransfer.FileSegmentAssembler fileSegmentAssembler = new FileTransfer.FileSegmentAssembler(outputDir, !transferIsClientToServer, fileLocation + "/" + filename, requestedFileId, MainPacketHandler.FileStreamAssemblerList, this.fileSegmentAssemblerList, FileTransfer.FileStreamTypes.HTTP2, "HTTP/2 stream " + http2Packet.StreamIdentifier + " " + headerDict[HPACK.HEADER_NAME_METHOD] + " " + path, fiveTuple, authority);
                             this.fileSegmentAssemblerList.Add(requestedFileId, fileSegmentAssembler);
                         }
 
@@ -543,7 +543,7 @@ namespace PacketParser.PacketHandlers
                                 lock (this.fileSegmentAssemblerList) {
                                     if (this.fileSegmentAssemblerList.ContainsKey(sentFileId))
                                         this.fileSegmentAssemblerList[sentFileId].AssembleAndClose();
-                                    FileTransfer.FileSegmentAssembler fileSegmentAssembler = new FileTransfer.FileSegmentAssembler(outputDir, transferIsClientToServer, fileLocation + "/" + filename, sentFileId, base.MainPacketHandler.FileStreamAssemblerList, this.fileSegmentAssemblerList, FileTransfer.FileStreamTypes.HTTP2, "HTTP/2 stream " + http2Packet.StreamIdentifier + " " + headerDict[HPACK.HEADER_NAME_METHOD] + " " + path, fiveTuple, authority);
+                                    FileTransfer.FileSegmentAssembler fileSegmentAssembler = new FileTransfer.FileSegmentAssembler(outputDir, transferIsClientToServer, fileLocation + "/" + filename, sentFileId, MainPacketHandler.FileStreamAssemblerList, this.fileSegmentAssemblerList, FileTransfer.FileStreamTypes.HTTP2, "HTTP/2 stream " + http2Packet.StreamIdentifier + " " + headerDict[HPACK.HEADER_NAME_METHOD] + " " + path, fiveTuple, authority);
                                     this.fileSegmentAssemblerList.Add(sentFileId, fileSegmentAssembler);
                                 }
                             }
@@ -608,7 +608,7 @@ namespace PacketParser.PacketHandlers
                         }
                         else if (assembler.ContentType?.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith("application/x-www-form-urlencoded") == true) {
 
-                            Mime.MultipartPart mimeMultipart = new Mime.MultipartPart(Packets.HttpPacket.GetUrlEncodedNameValueCollection(Utils.ByteConverter.ReadString(data), true));
+                            Mime.MultipartPart mimeMultipart = new Mime.MultipartPart(HttpPacket.GetUrlEncodedNameValueCollection(Utils.ByteConverter.ReadString(data), true));
                             if (mimeMultipart?.Attributes != null) {
                                 mainPacketHandler.OnParametersDetected(new Events.ParametersEventArgs(tcpPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, fiveTuple.Transport, tcpPacket.SourcePort, tcpPacket.DestinationPort, mimeMultipart.Attributes, http2Packet.ParentFrame.Timestamp, "HTTP/2 POST parameters"));
 

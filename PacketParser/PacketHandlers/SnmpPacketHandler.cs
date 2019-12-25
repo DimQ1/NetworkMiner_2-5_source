@@ -31,7 +31,7 @@ namespace PacketParser.PacketHandlers {
 
                     if (!string.IsNullOrEmpty(snmpPacket.CommunityString)) {
                         tmpCol.Add("SNMP community", snmpPacket.CommunityString);
-                        base.MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, packetDescription, "SNMP community", snmpPacket.CommunityString, snmpPacket.ParentFrame.Timestamp));
+                        MainPacketHandler.AddCredential(new NetworkCredential(sourceHost, destinationHost, packetDescription, "SNMP community", snmpPacket.CommunityString, snmpPacket.ParentFrame.Timestamp));
                     }
                     foreach(string snmpString in snmpPacket.CarvedStrings) {
                         if (!string.IsNullOrEmpty(snmpString)) {
@@ -55,7 +55,7 @@ namespace PacketParser.PacketHandlers {
                         }
                     }
                     if(tmpCol.Count > 0)
-                        base.MainPacketHandler.OnParametersDetected(new PacketParser.Events.ParametersEventArgs(snmpPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, udpPacket.TransportProtocol, udpPacket.SourcePort, udpPacket.DestinationPort, tmpCol, snmpPacket.ParentFrame.Timestamp, packetDescription));
+                        MainPacketHandler.OnParametersDetected(new PacketParser.Events.ParametersEventArgs(snmpPacket.ParentFrame.FrameNumber, sourceHost, destinationHost, udpPacket.TransportProtocol, udpPacket.SourcePort, udpPacket.DestinationPort, tmpCol, snmpPacket.ParentFrame.Timestamp, packetDescription));
                 }
                 
             }

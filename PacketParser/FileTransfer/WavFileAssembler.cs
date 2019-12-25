@@ -37,7 +37,7 @@ namespace PacketParser.FileTransfer {
             uint metaDataLength = 0;
 
             //Write WAV header http://soundfile.sapp.org/doc/WaveFormat/
-            this.AddData(System.Text.ASCIIEncoding.ASCII.GetBytes("RIFF"), wc++);
+            this.AddData(Encoding.ASCII.GetBytes("RIFF"), wc++);
             if (audioFormat == AudioFormat.WAVE_FORMAT_PCM)
                 this.AddData(Utils.ByteConverter.ToByteArray(nSamples * nChannels * bitsPerSampleOut / 8 + 36 + metaDataLength, true), wc++);//ChunkSize = This is the size of the rest of the chunk following this number.This is the size of the entire file in bytes minus 8 bytes for the two fields not included in this count: ChunkID and ChunkSize.
             else if (audioFormat == AudioFormat.WAVE_FORMAT_ALAW || audioFormat == AudioFormat.WAVE_FORMAT_MULAW)
@@ -46,10 +46,10 @@ namespace PacketParser.FileTransfer {
                 this.AddData(Utils.ByteConverter.ToByteArray(nSamples * 8 + 50 + metaDataLength, true), wc++);//ChunkSize = This is the size of the rest of the chunk following this number.This is the size of the entire file in bytes minus 8 bytes for the two fields not included in this count: ChunkID and ChunkSize.
             else
                 throw new NotSupportedException("Only PCM, A-Law, u-Law and G.729 supported!");
-            this.AddData(System.Text.ASCIIEncoding.ASCII.GetBytes("WAVE"), wc++);
+            this.AddData(Encoding.ASCII.GetBytes("WAVE"), wc++);
 
             //==fmt chunk (26 bytes)==
-            this.AddData(System.Text.ASCIIEncoding.ASCII.GetBytes("fmt "), wc++);
+            this.AddData(Encoding.ASCII.GetBytes("fmt "), wc++);
             if (audioFormat == AudioFormat.WAVE_FORMAT_PCM)
                 this.AddData(new byte[] { 0x10, 0, 0, 0 }, wc++);//Subchunk1Size (0x10 = PCM with no extra) Chunk size: 16, 18 or 40 according to http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
             else if (audioFormat == AudioFormat.WAVE_FORMAT_ALAW || audioFormat == AudioFormat.WAVE_FORMAT_MULAW || audioFormat == AudioFormat.WAVE_FORMAT_G729)
@@ -64,13 +64,13 @@ namespace PacketParser.FileTransfer {
                 this.AddData(new byte[] { 0, 0 }, wc++);//cbSize 	(Size of the extension (0 or 22) NOT IN PCM!
 
                 //==fact chunk (12 bytes)== http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
-                this.AddData(System.Text.ASCIIEncoding.ASCII.GetBytes("fact"), wc++);
+                this.AddData(Encoding.ASCII.GetBytes("fact"), wc++);
                 this.AddData(new byte[] { 4, 0, 0, 0 }, wc++);//Chunk size: minimum 4
                 this.AddData(Utils.ByteConverter.ToByteArray(nSamples, true), wc++);
             }
 
             //==DATA (8 bytes + samples)==
-            this.AddData(System.Text.ASCIIEncoding.ASCII.GetBytes("data"), wc++);//Subchunk2ID
+            this.AddData(Encoding.ASCII.GetBytes("data"), wc++);//Subchunk2ID
             this.AddData(Utils.ByteConverter.ToByteArray(nSamples * nChannels * bitsPerSampleOut / 8, true), wc++);//Subchunk2Size == NumSamples * NumChannels * BitsPerSample/8
 
         }

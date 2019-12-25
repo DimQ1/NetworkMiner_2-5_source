@@ -138,8 +138,8 @@ namespace PacketParser.Packets {
             if (lengthPrefix) {//Typically when parsing DNS over TCP
                 ushort packetLength = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex);
                 packetStartIndex += 2;
-                base.PacketStartIndex += 2;
-                base.PacketEndIndex = Math.Min(base.PacketEndIndex, base.PacketStartIndex + packetLength - 1);
+                PacketStartIndex += 2;
+                PacketEndIndex = Math.Min(PacketEndIndex, PacketStartIndex + packetLength - 1);
             }
             //header
             this.transactionID = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex);

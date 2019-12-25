@@ -118,7 +118,7 @@ namespace NetworkMiner {
 
             this.currentKeywordFilter = filter;
             if(filter.InputString == null || filter.InputString.Length == 0)
-                this.keywordComboBox.BackColor = System.Drawing.SystemColors.Window;
+                this.keywordComboBox.BackColor = SystemColors.Window;
             else {
                 this.keywordComboBox.BackColor = Color.LightGreen;
                 bool newKeyword = true;
@@ -152,7 +152,7 @@ namespace NetworkMiner {
                 }
                 catch(Exception keywordException) {
                     this.currentKeywordFilter = null;
-                    this.keywordComboBox.BackColor = System.Drawing.SystemColors.Window;
+                    this.keywordComboBox.BackColor = SystemColors.Window;
                     //this.AddItemRangeCallback(this.UnfilteredList.ToArray());
                     MessageBox.Show(this, keywordException.Message, "Invalid Keyword Filter");
                 }
@@ -173,8 +173,8 @@ namespace NetworkMiner {
         /// </summary>
         private void validateInputSettings(object sender, EventArgs e) {
             if (this.keywordComboBox.Text == null || this.keywordComboBox.Text.Length == 0 || this.currentKeywordFilter == null || !this.keywordComboBox.Text.Equals(this.currentKeywordFilter.InputString) || this.caseSensitiveCheckBox.Checked != this.currentKeywordFilter.CaseSensitive || !this.filterModeComboBox.SelectedText.Equals(this.currentKeywordFilter.InputFilterMode.ToString())) {
-                if (this.keywordComboBox.BackColor != System.Drawing.SystemColors.Window)
-                    this.keywordComboBox.BackColor = System.Drawing.SystemColors.Window;
+                if (this.keywordComboBox.BackColor != SystemColors.Window)
+                    this.keywordComboBox.BackColor = SystemColors.Window;
             }
             else if (this.keywordComboBox.Text.Equals(this.currentKeywordFilter.InputString) && this.caseSensitiveCheckBox.Checked == this.currentKeywordFilter.CaseSensitive && this.filterModeComboBox.SelectedText.Equals(this.currentKeywordFilter.InputFilterMode.ToString()))
                 if (this.keywordComboBox.BackColor != Color.LightGreen)

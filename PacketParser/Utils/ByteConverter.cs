@@ -341,7 +341,7 @@ namespace PacketParser.Utils {
             StringBuilder sb = new StringBuilder();
             while (i < bytesToRead && dataIndex + i < data.Length) {
                 if (unicodeData) {
-                    ushort unicodeValue = ByteConverter.ToUInt16(data, dataIndex + i, reverseOrder);
+                    ushort unicodeValue = ToUInt16(data, dataIndex + i, reverseOrder);
                     if (nullTerminatedString && unicodeValue == 0)
                         break;
                     if (encoding == Encoding.TDS_password) {
@@ -374,13 +374,13 @@ namespace PacketParser.Utils {
             if (stringLengthFieldBytes == 1)
                 stringLength = data[index];
             else if (stringLengthFieldBytes == 2)
-                stringLength = ByteConverter.ToUInt16(data, index);
+                stringLength = ToUInt16(data, index);
             else if (stringLengthFieldBytes == 4)
-                stringLength = (int)ByteConverter.ToUInt32(data, index);
+                stringLength = (int)ToUInt32(data, index);
             else
                 throw new Exception("Selected stringLengthFieldBytes is not supported");
             index += stringLengthFieldBytes;
-            string returnString = ByteConverter.ReadString(data, index, stringLength);
+            string returnString = ReadString(data, index, stringLength);
             index += stringLength;
             return returnString;
         }
@@ -411,7 +411,7 @@ namespace PacketParser.Utils {
                 for (int offset = 0; dataIndex + offset < data.Length && offset < maxStringLength * 2; offset += 2) {
                     ushort b;
                     if (dataIndex + offset + 1 < data.Length)
-                        b = ByteConverter.ToUInt16(data, dataIndex + offset, reverseOrder);
+                        b = ToUInt16(data, dataIndex + offset, reverseOrder);
                     else//only one byte to read
                         b = (ushort)data[dataIndex + offset];
                     if (b == 0x0000) {
@@ -454,7 +454,7 @@ namespace PacketParser.Utils {
         }
 
         public static string ToMd5HashString(string originalText, bool uppercase = false) {
-            System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5CryptoServiceProvider.Create();
+            System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();
             byte[] textArray = new byte[originalText.Length];
             for (int i = 0; i < originalText.Length; i++)
                 textArray[i] = (byte)originalText[i];
@@ -483,7 +483,7 @@ namespace PacketParser.Utils {
 
         public static DateTime ToUnixTimestamp(byte[] data, int offset) {
             //reads 4 bytes
-            long seconds = (long)ByteConverter.ToUInt32(data, offset);/*seconds since January 1, 1970 00:00:00 GMT*/
+            long seconds = (long)ToUInt32(data, offset);/*seconds since January 1, 1970 00:00:00 GMT*/
             DateTime timestamp = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return timestamp.AddTicks(seconds * 10000000);
         }
@@ -501,7 +501,7 @@ namespace PacketParser.Utils {
                     quotedPrintableBytes.Add(b);
                 else {//Rule #1
                     string escapeSequence = "=" + b.ToString("X2");
-                    foreach (byte eb in System.Text.ASCIIEncoding.ASCII.GetBytes(escapeSequence))
+                    foreach (byte eb in System.Text.Encoding.ASCII.GetBytes(escapeSequence))
                         quotedPrintableBytes.Add(eb);
                 }
 
@@ -545,7 +545,7 @@ namespace PacketParser.Utils {
                     //do nothing
                 }
                 else if (quotedPrintableData[i] == equals && i + 2 < quotedPrintableData.Length) {
-                    string hexValue = ByteConverter.ReadString(quotedPrintableData, i + 1, 2);
+                    string hexValue = ReadString(quotedPrintableData, i + 1, 2);
 
                     if (hexValue == "\r\n")
                         i += 2; //skip past the soft line break
@@ -623,7 +623,7 @@ namespace PacketParser.Utils {
                     throw new Exception("Reserved");
                 else {
                     //lengths are in Network Byte Order (Big-Endian).
-                    sequenceElementLength = (int)Utils.ByteConverter.ToUInt32(data, index, bytesInLengthValue, false);
+                    sequenceElementLength = (int)ToUInt32(data, index, bytesInLengthValue, false);
                     index += bytesInLengthValue;
                 }
             }

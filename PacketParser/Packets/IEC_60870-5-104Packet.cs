@@ -678,7 +678,7 @@ namespace PacketParser.Packets {
 
             public override string ToString() {
                 //return (this.value * NORMALIZATION_FACTOR).ToString("F5");
-                return (base.Value * NORMALIZATION_FACTOR).ToString("P", this.PercentFormat);
+                return (Value * NORMALIZATION_FACTOR).ToString("P", this.PercentFormat);
             }
         }
 

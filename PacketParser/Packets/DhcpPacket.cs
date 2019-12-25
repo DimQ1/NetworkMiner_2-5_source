@@ -40,41 +40,41 @@ namespace PacketParser.Packets {
             : base(parentFrame, packetStartIndex, packetEndIndex, "DHCP (Bootstrap protocol)") {
             this.opCode=(OpCodeValue)parentFrame.Data[packetStartIndex];
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("OpCode", this.OpCode.ToString());
+                Attributes.Add("OpCode", this.OpCode.ToString());
             //skip hardware type
             //skip hlen
             //skip hops
             this.transactionID = Utils.ByteConverter.ToUInt32(parentFrame.Data, packetStartIndex + 4);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Transaction ID", "0x"+this.transactionID.ToString("X2"));
+                Attributes.Add("Transaction ID", "0x"+this.transactionID.ToString("X2"));
             this.secondsElapsed = Utils.ByteConverter.ToUInt16(parentFrame.Data, packetStartIndex + 8);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Seconds elapsed", this.secondsElapsed.ToString());
+                Attributes.Add("Seconds elapsed", this.secondsElapsed.ToString());
             //skip flags (unused in BOOTP)
 
             byte[] ipAddrArray=new byte[4];
             Array.ConstrainedCopy(parentFrame.Data, packetStartIndex+12, ipAddrArray, 0, 4);
             clientIpAddress=new System.Net.IPAddress(ipAddrArray);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Client IP Address", this.clientIpAddress.ToString());
+                Attributes.Add("Client IP Address", this.clientIpAddress.ToString());
             Array.ConstrainedCopy(parentFrame.Data, packetStartIndex+16, ipAddrArray, 0, 4);//do I need to create a new byte[4] before this one?
             yourIpAddress=new System.Net.IPAddress(ipAddrArray);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Your IP Address", this.yourIpAddress.ToString());
+                Attributes.Add("Your IP Address", this.yourIpAddress.ToString());
             Array.ConstrainedCopy(parentFrame.Data, packetStartIndex+20, ipAddrArray, 0, 4);
             serverIpAddress=new System.Net.IPAddress(ipAddrArray);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Server IP Address", this.serverIpAddress.ToString());
+                Attributes.Add("Server IP Address", this.serverIpAddress.ToString());
             Array.ConstrainedCopy(parentFrame.Data, packetStartIndex+24, ipAddrArray, 0, 4);
             gatewayIpAddress=new System.Net.IPAddress(ipAddrArray);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Gateway IP Address", this.gatewayIpAddress.ToString());
+                Attributes.Add("Gateway IP Address", this.gatewayIpAddress.ToString());
             
             byte[] macAddrArray=new byte[6];
             Array.ConstrainedCopy(parentFrame.Data, packetStartIndex+28, macAddrArray, 0, 6);
             clientMacAddress=new System.Net.NetworkInformation.PhysicalAddress(macAddrArray);
             if (!this.ParentFrame.QuickParse)
-                base.Attributes.Add("Client MAC Address", this.clientMacAddress.ToString());
+                Attributes.Add("Client MAC Address", this.clientMacAddress.ToString());
             //skip extra 10 bytes of client hardware address
 
             //Skip 192 octets of 0's. BOOTP legacy
@@ -95,7 +95,7 @@ namespace PacketParser.Packets {
                 }
                 optionList.Add(option);
                 if (!this.ParentFrame.QuickParse) {
-                    base.Attributes.Add("DHCP Options", option.OptionCode.ToString());
+                    Attributes.Add("DHCP Options", option.OptionCode.ToString());
                 }
                 index+=option.OptionValue.Length+2;
             }

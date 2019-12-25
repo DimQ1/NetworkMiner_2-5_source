@@ -35,7 +35,7 @@ namespace NetworkMiner {
             try {
                 NetworkMinerForm networkMinerForm = new NetworkMinerForm();
                 if(checkForUpdates)
-                    NetworkMiner.UpdateCheck.ShowNewVersionFormIfAvailableAsync(networkMinerForm, System.Reflection.Assembly.GetEntryAssembly().GetName().Version);
+                    UpdateCheck.ShowNewVersionFormIfAvailableAsync(networkMinerForm, System.Reflection.Assembly.GetEntryAssembly().GetName().Version);
                 else
                     SharedUtils.Logger.Log("Skipping update check", SharedUtils.Logger.EventLogEntryType.Information);
                 SharedUtils.Logger.Log("GUI form object created, starting application message loop", SharedUtils.Logger.EventLogEntryType.Information);

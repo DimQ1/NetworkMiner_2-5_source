@@ -63,13 +63,13 @@ namespace PacketParser.Mime {
             if (rfc2047String.StartsWith("=?") && rfc2047String.EndsWith("?=")) {
                 string[] parts = rfc2047String.Trim(EQ).Split(QU, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 3) {
-                    Encoding enc = System.Text.Encoding.GetEncoding(parts[0]);
+                    Encoding enc = Encoding.GetEncoding(parts[0]);
                     //undo the byte[] to string conversion from PacketParser.Mime.UnbufferedReader
                     List<byte> bytes = new List<byte>();
                     for (int i = 0; i < parts[2].Length; i++)
                         bytes.Add((byte)parts[2][i]);
                     if (parts[1].Equals("B", StringComparison.InvariantCultureIgnoreCase))//base64 decode
-                        bytes = new List<byte>(System.Convert.FromBase64String(parts[2]));
+                        bytes = new List<byte>(Convert.FromBase64String(parts[2]));
                     else if (parts[1].Equals("Q", StringComparison.InvariantCultureIgnoreCase))//Quoted Printable
                         bytes = Utils.ByteConverter.ReadQuotedPrintable(bytes.ToArray());
                     return enc.GetString(bytes.ToArray());

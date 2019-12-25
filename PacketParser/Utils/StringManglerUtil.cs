@@ -96,19 +96,19 @@ namespace PacketParser.Utils {
             foreach (string s in strings) {
                 //string s=(string)o;
                 if (s.StartsWith("0x"))
-                    byteArrays.Add(PacketParser.Utils.ByteConverter.ToByteArrayFromHexString(s));
+                    byteArrays.Add(ByteConverter.ToByteArrayFromHexString(s));
                 else if(s.Length >= minLength) {
                     char[] charArray = s.ToCharArray();
 
-                    byte[] ansiByteArray = System.Text.Encoding.Default.GetBytes(charArray);
-                    byte[] bigEndianUnicodeByteArray = System.Text.Encoding.BigEndianUnicode.GetBytes(charArray);
+                    byte[] ansiByteArray = Encoding.Default.GetBytes(charArray);
+                    byte[] bigEndianUnicodeByteArray = Encoding.BigEndianUnicode.GetBytes(charArray);
                     if (bigEndianUnicodeByteArray.Length > 0 && bigEndianUnicodeByteArray[0] == 0x00) {
                         //skip the first byte to improve search performance and comply with little endian unicode strings as well (roughly anyway)
                         byte[] tmpArray = bigEndianUnicodeByteArray;
                         bigEndianUnicodeByteArray = new byte[tmpArray.Length - 1];
                         Array.Copy(tmpArray, 1, bigEndianUnicodeByteArray, 0, bigEndianUnicodeByteArray.Length);
                     }
-                    byte[] utf8ByteArray = System.Text.Encoding.UTF8.GetBytes(charArray);
+                    byte[] utf8ByteArray = Encoding.UTF8.GetBytes(charArray);
 
                     byteArrays.Add(bigEndianUnicodeByteArray);
                     byteArrays.Add(ansiByteArray);
@@ -131,7 +131,7 @@ namespace PacketParser.Utils {
         public static string ConvertToAsciiIfUnicode(string unicodeString) {
 
             if (unicodeString.Any(c => c > 255)) {
-                string normalized = new string(unicodeString.Normalize(System.Text.NormalizationForm.FormD).ToCharArray().Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark).ToArray()).Normalize(NormalizationForm.FormC);
+                string normalized = new string(unicodeString.Normalize(NormalizationForm.FormD).ToCharArray().Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark).ToArray()).Normalize(NormalizationForm.FormC);
                 if (normalized.Any(c => c > 255)) {
                     string ascii = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(normalized));
                     return ascii;
