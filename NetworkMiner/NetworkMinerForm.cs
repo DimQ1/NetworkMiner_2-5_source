@@ -753,8 +753,8 @@ namespace NetworkMiner
             this.messageEncodingComboBox.Items.Add(new EncodingWrapper(Encoding.UTF32));
             this.messageEncodingComboBox.Items.Add(new EncodingWrapper(Encoding.Unicode));
             this.messageEncodingComboBox.Items.Add(new EncodingWrapper(Encoding.ASCII));
-            this.messageEncodingComboBox.Items.Add(new EncodingWrapper(Encoding.GetEncoding(850)));
-            this.messageEncodingComboBox.Items.Add(new EncodingWrapper(Encoding.GetEncoding(437)));
+            //this.messageEncodingComboBox.Items.Add(new EncodingWrapper(Encoding.GetEncoding(850)));
+            //this.messageEncodingComboBox.Items.Add(new EncodingWrapper(Encoding.GetEncoding(437)));
 
             //There seems to be a bug in MONO with regards to code pages it doesn't think are used: http://stackoverflow.com/a/29702302
             try

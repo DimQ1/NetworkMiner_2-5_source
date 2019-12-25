@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SharedUtils.Pcap {
+namespace SharedUtils.Pcap
+{
     public class PcapFrame {
 
         public enum DataLinkTypeEnum : uint {

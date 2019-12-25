@@ -9,6 +9,8 @@ using System.Net;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PacketParser {
 
@@ -73,9 +75,11 @@ namespace PacketParser {
         private List<PacketHandlers.IPacketHandler> packetHandlerList;
         private List<PacketHandlers.ITcpSessionPacketHandler> tcpSessionPacketHandlerList;
 
-        //Threads
-        private System.Threading.Thread packetQueueConsumerThread;
-        private System.Threading.Thread frameQueueConsumerThread;
+        //Tasks
+        private Task packetQueueConsumerThread;
+        private Task frameQueueConsumerThread;
+
+        private CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
         //Protocol Finder Factory
         private ISessionProtocolFinderFactory protocolFinderFactory;
@@ -217,8 +221,8 @@ namespace PacketParser {
             //this.framesToParseQueue=new Queue<Frame>(RECEIVED_PACKETS_QUEUE_MAX_SIZE);
             this.framesToParseQueue = new System.Collections.Concurrent.BlockingCollection<Frame>(RECEIVED_PACKETS_QUEUE_MAX_SIZE);
             
-            this.packetQueueConsumerThread=new System.Threading.Thread(new System.Threading.ThreadStart(delegate() { this.CreateFramesFromPacketsInPacketQueue(); }));
-            this.frameQueueConsumerThread=new System.Threading.Thread(new System.Threading.ThreadStart(delegate() { this.ParseFramesInFrameQueue(); }));
+            this.packetQueueConsumerThread= new Task(()=> this.CreateFramesFromPacketsInPacketQueue(), CancellationTokenSource.Token);
+            this.frameQueueConsumerThread=new Task(()=> this.ParseFramesInFrameQueue(), CancellationTokenSource.Token);
 
             //this.framesToParseQueueEvent = new System.Threading.AutoResetEvent(false);
             //this.receivedPacketsQueueEvent = new System.Threading.AutoResetEvent(false);
@@ -333,16 +337,12 @@ namespace PacketParser {
 
 
         public void StartBackgroundThreads() {
-            
-            //packetHandlerThread.Start();
-
             this.packetQueueConsumerThread.Start();
             this.frameQueueConsumerThread.Start();
         }
 
         public void AbortBackgroundThreads() {
-            this.packetQueueConsumerThread.Abort();
-            this.frameQueueConsumerThread.Abort();
+            this.CancellationTokenSource.Cancel();
         }
 
         internal virtual void OnInsufficientWritePermissionsDetected(string path) {
