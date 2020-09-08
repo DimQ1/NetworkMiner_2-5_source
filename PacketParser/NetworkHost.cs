@@ -16,7 +16,7 @@ using System.ComponentModel;
 using System.Linq;
 
 namespace PacketParser {
-    public class NetworkHost : IComparable, System.Xml.Serialization.IXmlSerializable {
+    public class NetworkHost : IComparable<NetworkHost>, System.Xml.Serialization.IXmlSerializable {
         
         public enum OperatingSystemID { Windows, Linux, UNIX, FreeBSD, NetBSD, Solaris, MacOS, Apple_iOS, Cisco, Android, BlackBerry, PlayStation, Nintendo, ICS_device, ABB, Siemens, Other, Unknown }
 
